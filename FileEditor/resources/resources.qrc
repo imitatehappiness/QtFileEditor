@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>icons/fileIcons/close_file.png</file>
+        <file>icons/fileIcons/delete_file.png</file>
+        <file>icons/fileIcons/new_file.png</file>
+        <file>icons/fileIcons/save_as_file.png</file>
+        <file>icons/fileIcons/save_file.png</file>
+        <file>icons/fileIcons/open_file.png</file>
+        <file>icons/appIcon.png</file>
+        <file>style/appstyles.qss</file>
+    </qresource>
+</RCC>
