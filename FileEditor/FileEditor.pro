@@ -27,12 +27,3 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources/resources.qrc
-
-DISTFILES += \
-    resources/icons/appIcon.png \
-    resources/icons/fileIcons/close_file.png \
-    resources/icons/fileIcons/delete_file.png \
-    resources/icons/fileIcons/new_file.png \
-    resources/icons/fileIcons/open_file.png \
-    resources/icons/fileIcons/save_as_file.png \
-    resources/icons/fileIcons/save_file.png

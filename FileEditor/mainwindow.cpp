@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->statusbar->addWidget(mLabelFilename);
 
     mNotification = new Notification(this);
+
+    setWindowOpacity(0.95);
+
 }
 
 MainWindow::~MainWindow(){

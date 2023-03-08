@@ -58,3 +58,4 @@ compile_commands.json
 *_qmlcache.qrc
 debug/
 release/
+.qtc_clangd/
