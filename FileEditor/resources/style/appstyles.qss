@@ -1,7 +1,22 @@
+QMainWindow {
+    font: 12pt "Consolas";
+}
+
 QTreeView {
     selection-background-color: green;
+    background-color: rgb(24, 24, 24);
+    border: 1px solid #eee;
     border-radius: 5px;
-    background-color: #eee;
+    color: #eee;
+}
+
+QHeaderView::section {
+    background-color: rgb(24, 24, 24);
+    color: #eee;
+    padding-left: 4px;
+    border-bottom: 1px solid #6c6c6c;
+    font: 12pt "Consolas";
+    border-right: none;
 }
 
 QTextEdit {
@@ -12,10 +27,39 @@ QTextEdit {
 }
 
 MainWindow{
-    background-color: rgb(24, 24, 24);
+    background-color: #eee;
     color: rgb(238, 238, 238);
 }
 
 QLabel{
-    color: #eee;
+    color: rgb(24, 24, 24);
 }
+
+QScrollBar:vertical {
+        background-color: rgb(24, 24, 24);
+        width: 10px;
+        margin: 3px 3px 3px 3px;
+        border-radius: 5px;
+    }
+
+    QScrollBar::handle:vertical {
+        background: #eee;
+        border-radius: 10px;
+        min-height: 5px;
+    }
+
+    QScrollBar::add-line:vertical {
+        background-color: rgb(24, 24, 24);
+        height: 0px;
+        width: 10px;
+        subcontrol-position: bottom;
+        subcontrol-origin: margin;
+    }
+
+    QScrollBar::sub-line:vertical {
+        background-color: rgb(24, 24, 24);
+        height: 0px;
+        width: 10px;
+        subcontrol-position: top;
+        subcontrol-origin: margin;
+    }
