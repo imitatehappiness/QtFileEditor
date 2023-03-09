@@ -265,6 +265,7 @@ void MainWindow::treeMenuDelete(bool){
             mNotification->setNotificationText("Deleted: " + path);
             mNotification->show();
             mModel->removeRow(index.row(), index.parent());
+            ui->tE_textEditor->clear();
         }
     }
 }
