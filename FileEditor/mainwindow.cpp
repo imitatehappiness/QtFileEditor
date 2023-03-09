@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QDebug>
 #include <QModelIndex>
+#include <QtGui>
 
 #include <QThread>
 
@@ -73,7 +74,7 @@ void MainWindow::fileCreate(){
 }
 
 void MainWindow::fileOpen(){
-    mFilename = QFileDialog::getOpenFileName(this, "Open file", mFilename, "*.txt *.c *.cpp *.h");
+    mFilename = QFileDialog::getOpenFileName(this, "Open file", mFilename, "*.txt *.c *.cpp *.h *.qrc *.qss *.hpp *.pro *.c *.md");
     if(mFilename==""){
         return;
     }
@@ -115,7 +116,7 @@ void MainWindow::fileSave(){
 }
 
 void MainWindow::fileSaveAs(){
-    mFilename = QFileDialog::getSaveFileName(this,"Save As", mFilename);
+    mFilename = QFileDialog::getSaveFileName(this,"Save As", mFilename, "Text files (*.txt);;Text files (*.cpp);;Text files (*.h);;Text files (*.hpp);;Text files (*.md);;Text files (*.qss)");
     if(mFilename==""){
         return;
     }
@@ -167,13 +168,6 @@ void MainWindow::fillModel(QDir dir){
 
     // При запуске потока запускаем выполнение метода class::process()
     connect(thread, &QThread::started, dm, &DirManager::fillTree);
-    // При излучении сигнала finished получаем флаг успешности и выводим в консоль соответствующее сообщение
-    connect(dm, &DirManager::finished, this, [=](bool state){
-        if(state){
-            mNotification->setNotificationText("Select: " + mPath);
-            mNotification->show();
-        }
-    });
     // Также, по сигналу finished отправляем команду на завершение потока
     connect(dm, &DirManager::finished, thread, &QThread::quit);
     // А потом удаляем экземпляр обработчика
@@ -194,14 +188,21 @@ void MainWindow::treeMenu(const QPoint &pos){
     QModelIndex curIndex = ui->tV_directories->indexAt(pos);
     QModelIndex index = curIndex.sibling(curIndex.row(), 0);
     if (index.isValid()){
-        if(mModel->itemFromIndex(index)->data(Qt::UserRole + 1).toString() == "folder"){
-            return;
+
+        if(mModel->itemFromIndex(index)->data(Qt::UserRole + 1).toString() != "folder"){
+            menu.addAction (QIcon("resources/icons/fileIcons/open_file.png"), QStringLiteral("Open"), this, SLOT (treeMenuOpen(bool)));
+
         }
-        menu.addAction (QIcon("resources/icons/fileIcons/open_file.png"), QStringLiteral("Open"), this, SLOT (treeMenuOpen(bool)));
         menu.addAction (QIcon("resources/icons/fileIcons/delete_file.png"), QStringLiteral("Delete"), this, SLOT (treeMenuDelete(bool)));
+
 
     }
     menu.exec(QCursor::pos());
+}
+
+bool MainWindow::removeDir(const QString& path){
+    QDir dir(path);
+    return dir.removeRecursively();
 }
 
 void MainWindow::treeMenuOpen(bool /*checked*/){
@@ -224,8 +225,10 @@ void MainWindow::treeMenuDelete(bool){
             QStandardItem* item = mModel->itemFromIndex(index);
             QString path = item->data(Qt::UserRole + 2).toString();
             QDir dir;
-            dir.remove(path);
-            mNotification->setNotificationText("Deleted: " + path);
+            bool res = QFileInfo(path).isDir() ? removeDir(path) : dir.remove(path);
+            res ?  mNotification->setNotificationText("Deleted: " + path) :
+                   mNotification->setNotificationText("Deletion Error: " + path) ;
+
             mNotification->show();
             mModel->removeRow(index.row(), index.parent());
             ui->tE_textEditor->clear();

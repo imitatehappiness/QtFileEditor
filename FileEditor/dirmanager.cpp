@@ -55,6 +55,10 @@ void DirManager::findChildrenDir(QStandardItem* item, QDir dir){
             if(mTypeFileIgnore.contains(fileList[i].split("_").at(0))){
                 continue;
             }
+        }else{
+            if(fileList[i][0] == "."){
+                continue;
+            }
         }
         QStandardItem * childItem = new QStandardItem(fileList[i]);
         file.isFile() ? childItem->setData("file", Qt::UserRole + 1) :
@@ -71,9 +75,9 @@ void DirManager::findChildrenDir(QStandardItem* item, QDir dir){
         }
     }
 
-    if(!item->hasChildren()){
-        mModel.removeRow(item->index().row(), item->index().parent());
-    }
+//    if(!item->hasChildren()){
+//        mModel.removeRow(item->index().row(), item->index().parent());
+//    }
 }
 
 void DirManager::setFont(QStandardItem &item){

@@ -13,9 +13,10 @@ class DirManager : public QObject {
     Q_OBJECT
 public:
     DirManager(QStandardItemModel& model, QDir dir);
-private:
     void setFont(QStandardItem& item);
     void setIcon(QStandardItem& item);
+private:
+
     QString getFilenameFromPath(QString& path);
     void findChildrenDir(QStandardItem *item, QDir dir);
     QString getTypeFile(QString &name);

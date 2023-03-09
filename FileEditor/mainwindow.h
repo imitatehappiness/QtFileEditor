@@ -29,6 +29,7 @@ private:
     void fileOpen(QString& path);
     void fillModel(QDir dir);
     void treeMenu(const QPoint &pos);
+    bool removeDir(const QString &path);
 
 private:
     Ui::MainWindow *ui;
