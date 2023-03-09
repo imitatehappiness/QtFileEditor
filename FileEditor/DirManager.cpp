@@ -1,13 +1,13 @@
-#include "dirmanadger.h"
+#include "dirmanager.h"
 
-DirManadger::DirManadger(QStandardItemModel& model, QDir dir)
+DirManager::DirManager(QStandardItemModel& model, QDir dir)
     : mModel(model),
       mDir(dir){
     mTypeFile.append({"cpp", "h", "hpp", "md", "c", "pro", "qrc", "ui", "txt", "qss"});
     mTypeFileIgnore.append({"moc", "qrc", "ui"});
 }
 
-void DirManadger::fillTree(){
+void DirManager::fillTree(){
     mModel.clear();
     mModel.setHorizontalHeaderLabels(QStringList()<<QStringLiteral("Name"));
 
@@ -27,14 +27,14 @@ void DirManadger::fillTree(){
         setFont(*item);
         setIcon(*item);
         mModel.appendRow(item);
-        findChildrenDir(item, mDir);
 
+        findChildrenDir(item, mDir);
     }
 
     emit finished(true);
 }
 
-void DirManadger::findChildrenDir(QStandardItem* item, QDir dir){
+void DirManager::findChildrenDir(QStandardItem* item, QDir dir){
     QString path = dir.path();
     QFileInfo file(path);
     if(file.isFile()){
@@ -75,7 +75,7 @@ void DirManadger::findChildrenDir(QStandardItem* item, QDir dir){
     }
 }
 
-void DirManadger::setFont(QStandardItem &item){
+void DirManager::setFont(QStandardItem &item){
     if(item.data(Qt::UserRole + 1).toString() == "folder"){
         QFont font;
         font.setBold(true);
@@ -83,7 +83,7 @@ void DirManadger::setFont(QStandardItem &item){
     }
 }
 
-void DirManadger::setIcon(QStandardItem &item){
+void DirManager::setIcon(QStandardItem &item){
     if(item.data(Qt::UserRole + 1).toString() == "folder"){
         item.setIcon(QIcon("resources/icons/folder.png"));
     }else{
@@ -91,12 +91,12 @@ void DirManadger::setIcon(QStandardItem &item){
     }
 }
 
-QString DirManadger::getFilenameFromPath(QString &path){
+QString DirManager::getFilenameFromPath(QString &path){
     QStringList parts = path.split("/");
     return parts.at(parts.size() - 1);
 }
 
-QString DirManadger::getTypeFile(QString &name){
+QString DirManager::getTypeFile(QString &name){
     QStringList parts = name.split(".");
     return parts.at(parts.size() - 1);
 }

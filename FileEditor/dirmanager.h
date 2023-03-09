@@ -7,12 +7,12 @@
 #include <QString>
 
 /*!
- * \brief The DirManadger class
+ * \brief The DirManager class
  */
-class DirManadger : public QObject {
+class DirManager : public QObject {
     Q_OBJECT
 public:
-    DirManadger(QStandardItemModel& model, QDir dir);
+    DirManager(QStandardItemModel& model, QDir dir);
 private:
     void setFont(QStandardItem& item);
     void setIcon(QStandardItem& item);

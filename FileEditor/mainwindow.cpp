@@ -10,7 +10,8 @@
 
 #include <QThread>
 
-#include "dirmanadger.h"
+#include "dirmanager.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow){
@@ -160,23 +161,23 @@ void MainWindow::fillModel(QDir dir){
     if(dir.path() == "" || dir.path() == "."){
         return;
     }
-    DirManadger* dm = new DirManadger(*mModel, QDir(mPath));
+    DirManager* dm = new DirManager(*mModel, QDir(mPath));
     QThread* thread = new QThread();
     dm->moveToThread(thread);
 
     // При запуске потока запускаем выполнение метода class::process()
-    connect(thread, &QThread::started, dm, &DirManadger::fillTree);
+    connect(thread, &QThread::started, dm, &DirManager::fillTree);
     // При излучении сигнала finished получаем флаг успешности и выводим в консоль соответствующее сообщение
-    connect(dm, &DirManadger::finished, this, [=](bool state){
+    connect(dm, &DirManager::finished, this, [=](bool state){
         if(state){
             mNotification->setNotificationText("Select: " + mPath);
             mNotification->show();
         }
     });
     // Также, по сигналу finished отправляем команду на завершение потока
-    connect(dm, &DirManadger::finished, thread, &QThread::quit);
+    connect(dm, &DirManager::finished, thread, &QThread::quit);
     // А потом удаляем экземпляр обработчика
-    connect(dm, &DirManadger::finished, dm, &QObject::deleteLater);
+    connect(dm, &DirManager::finished, dm, &QObject::deleteLater);
     // И наконец, когда закончит работу поток, удаляем и его
     connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
