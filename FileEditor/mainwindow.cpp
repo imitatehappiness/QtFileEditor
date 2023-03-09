@@ -41,7 +41,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tV_directories->setSelectionBehavior(QTreeView::SelectRows);
     ui->tV_directories->setSelectionMode(QTreeView::SingleSelection);
     mModel->setHorizontalHeaderLabels(QStringList()<<QStringLiteral("Name"));
-
     ui->tV_directories->setModel(mModel);
 
     ui->tV_directories->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -199,6 +198,9 @@ void MainWindow::findChildrenDir(QStandardItem* item, QDir dir){
 
 void MainWindow::selectDirectory(){
     mPath = QFileDialog::getExistingDirectory(this, "Select a directory");
+    if(mPath == ""){
+        return;
+    }
     mNotification->setNotificationText("Select: " + mPath);
     mNotification->show();
     fillModel(QDir(mPath));
