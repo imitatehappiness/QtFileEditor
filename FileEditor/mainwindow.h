@@ -30,10 +30,7 @@ private:
     void fileOpen(QString& path);
     void fillModel(QDir dir);
     void treeMenu(const QPoint &pos);
-    void findChildrenDir(QStandardItem *item, QDir dir);
-    void setFont(QStandardItem& item);
-    void setIcon(QStandardItem& item);
-    QString getFilenameFromPath(QString& path);
+
 private:
     Ui::MainWindow *ui;
     QString mFilename;

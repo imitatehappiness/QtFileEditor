@@ -8,6 +8,9 @@
 #include <QDebug>
 #include <QModelIndex>
 
+#include <QThread>
+
+#include "dirmanadger.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow){
@@ -18,9 +21,18 @@ MainWindow::MainWindow(QWidget *parent)
 
     QMenu *menu = menuBar()->addMenu("&Directory");
     auto *selectDir = new QAction("&Select", this);
+    auto *clearDir = new QAction("&Clear", this);
+
     selectDir->setIcon(QIcon("resources/icons/root-directory.png"));
+    clearDir->setIcon(QIcon("resources/icons/clear.png"));
+
     menu->addAction(selectDir);
+    menu->addAction(clearDir);
+
     connect(selectDir, SIGNAL(triggered()), this, SLOT(selectDirectory()));
+    connect(clearDir, &QAction::triggered, this, [=](){
+        mModel->clear();
+    });
 
     connect(ui->pB_fileCreate, SIGNAL(clicked()), this, SLOT(fileCreate()));
     connect(ui->pB_fileOpen, SIGNAL(clicked()), this, SLOT(fileOpen()));
@@ -145,87 +157,35 @@ void MainWindow::fileClose(){
 }
 
 void MainWindow::fillModel(QDir dir){
-    mModel->clear();
-    mModel->setHorizontalHeaderLabels(QStringList()<<QStringLiteral("Name"));
-
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs );
-
-    QString path = dir.path();
-    QString filename = getFilenameFromPath(path);
-    QFileInfo file(path);
-
-    if(file.exists()){
-        QStandardItem* item = new QStandardItem(filename);
-        file.isFile() ? item->setData("file", Qt::UserRole + 1) :
-                        item->setData("folder", Qt::UserRole + 1);
-
-        item->setData(path, Qt::UserRole + 2);
-        setFont(*item);
-        setIcon(*item);
-        mModel->appendRow(item);
-        findChildrenDir(item, dir);
-    }
-}
-
-void MainWindow::findChildrenDir(QStandardItem* item, QDir dir){
-    QString path = dir.path();
-    QFileInfo file(path);
-    if(file.isFile()){
+    if(dir.path() == "" || dir.path() == "."){
         return;
     }
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::AllDirs );
-    QStringList fileList = dir.entryList();
+    DirManadger* dm = new DirManadger(*mModel, QDir(mPath));
+    QThread* thread = new QThread();
+    dm->moveToThread(thread);
 
-    for (int i=0; i < fileList.count(); i++){
-        QString newPath = QString("%1/%2").arg(dir.absolutePath()).arg(fileList.at(i));
-        file.setFile(newPath);
-
-        QStandardItem * childItem = new QStandardItem(fileList[i]);
-        file.isFile() ? childItem->setData("file", Qt::UserRole + 1) :
-                        childItem->setData("folder", Qt::UserRole + 1);
-
-        childItem->setData(newPath, Qt::UserRole + 2);
-        setFont(*childItem);
-        setIcon(*childItem);
-
-        item->appendRow(childItem);
-
-        if(file.isDir()){
-            findChildrenDir(childItem, QDir(newPath));
+    // При запуске потока запускаем выполнение метода class::process()
+    connect(thread, &QThread::started, dm, &DirManadger::fillTree);
+    // При излучении сигнала finished получаем флаг успешности и выводим в консоль соответствующее сообщение
+    connect(dm, &DirManadger::finished, this, [=](bool state){
+        if(state){
+            mNotification->setNotificationText("Select: " + mPath);
+            mNotification->show();
         }
-    }
+    });
+    // Также, по сигналу finished отправляем команду на завершение потока
+    connect(dm, &DirManadger::finished, thread, &QThread::quit);
+    // А потом удаляем экземпляр обработчика
+    connect(dm, &DirManadger::finished, dm, &QObject::deleteLater);
+    // И наконец, когда закончит работу поток, удаляем и его
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+
+    thread->start();
 }
 
 void MainWindow::selectDirectory(){
     mPath = QFileDialog::getExistingDirectory(this, "Select a directory");
-    if(mPath == ""){
-        return;
-    }
-    mNotification->setNotificationText("Select: " + mPath);
-    mNotification->show();
     fillModel(QDir(mPath));
-}
-
-void MainWindow::setFont(QStandardItem &item){
-    if(item.data(Qt::UserRole + 1).toString() == "folder"){
-        QFont font;
-        //font.setPointSize(10);
-        font.setBold(true);
-        item.setFont(font);
-    }
-}
-
-void MainWindow::setIcon(QStandardItem &item){
-    if(item.data(Qt::UserRole + 1).toString() == "folder"){
-        item.setIcon(QIcon("resources/icons/folder.png"));
-    }else{
-        item.setIcon(QIcon("resources/icons/file.png"));
-    }
-}
-
-QString MainWindow::getFilenameFromPath(QString &path){
-    QStringList parts = path.split("/");
-    return parts.at(parts.size() - 1);
 }
 
 void MainWindow::treeMenu(const QPoint &pos){
@@ -236,8 +196,8 @@ void MainWindow::treeMenu(const QPoint &pos){
         if(mModel->itemFromIndex(index)->data(Qt::UserRole + 1).toString() == "folder"){
             return;
         }
-        menu.addAction (QStringLiteral ("Open"), this, SLOT (treeMenuOpen(bool)));
-        menu.addAction (QStringLiteral ("Delete"), this, SLOT (treeMenuDelete(bool)));
+        menu.addAction (QIcon("resources/icons/fileIcons/open_file.png"), QStringLiteral("Open"), this, SLOT (treeMenuOpen(bool)));
+        menu.addAction (QIcon("resources/icons/fileIcons/delete_file.png"), QStringLiteral("Delete"), this, SLOT (treeMenuDelete(bool)));
 
     }
     menu.exec(QCursor::pos());
@@ -295,3 +255,5 @@ void MainWindow::fileOpen(QString &path){
     }
     file.close();
 }
+
+

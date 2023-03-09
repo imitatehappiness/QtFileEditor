@@ -11,5 +11,6 @@
         <file>icons/folder.png</file>
         <file>icons/file.png</file>
         <file>icons/root-directory.png</file>
+        <file>icons/clear.png</file>
     </qresource>
 </RCC>

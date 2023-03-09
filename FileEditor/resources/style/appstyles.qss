@@ -36,30 +36,67 @@ QLabel{
 }
 
 QScrollBar:vertical {
-        background-color: rgb(24, 24, 24);
-        width: 10px;
-        margin: 3px 3px 3px 3px;
-        border-radius: 5px;
-    }
+    background-color: rgb(24, 24, 24);
+    width: 10px;
+    margin: 3px 3px 3px 3px;
+    border-radius: 5px;
+}
 
-    QScrollBar::handle:vertical {
-        background: #eee;
-        border-radius: 10px;
-        min-height: 5px;
-    }
+QScrollBar::handle:vertical {
+    background: #eee;
+    border-radius: 10px;
+    min-height: 5px;
+}
 
-    QScrollBar::add-line:vertical {
-        background-color: rgb(24, 24, 24);
-        height: 0px;
-        width: 10px;
-        subcontrol-position: bottom;
-        subcontrol-origin: margin;
-    }
+QScrollBar::add-line:vertical {
+    background-color: rgb(24, 24, 24);
+    height: 0px;
+    width: 10px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
 
-    QScrollBar::sub-line:vertical {
-        background-color: rgb(24, 24, 24);
-        height: 0px;
-        width: 10px;
-        subcontrol-position: top;
-        subcontrol-origin: margin;
-    }
+QScrollBar::sub-line:vertical {
+    background-color: rgb(24, 24, 24);
+    height: 0px;
+    width: 10px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+
+QToolTip{
+    background-color: rgba(24, 24, 24, 75%);
+    color: #eee;
+    border: 1px solid rgba(24, 24, 24, 75%);
+    border-radius: 10px;
+    widht: 24px;
+    font: 12pt "Consolas";
+
+}
+
+QMenu{
+    font: 10pt "Consolas";
+}
+
+QMenu::item{
+    background-color: #eee;
+    color: rgb(24, 24, 24);
+
+}
+
+QMenu::item:selected{
+    background-color: green;
+    color: #eee;
+
+}
+
+QMenuBar{
+    font: 10pt "Consolas";
+    font-weight: bold;
+}
+
+QMenuBar::item:selected{
+    background-color: green;
+    color: #eee;
+}
