@@ -7,6 +7,7 @@ DirManager::DirManager(QStandardItemModel& model, QDir dir)
     mTypeFileIgnore.append({"moc", "qrc", "ui"});
 }
 
+
 void DirManager::fillTree(){
     mModel.clear();
     mModel.setHorizontalHeaderLabels(QStringList()<<QStringLiteral("Name"));
