@@ -12,6 +12,8 @@
 #include <QThread>
 
 #include "dirmanager.h"
+#include "codeeditor.h"
+#include "notification.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

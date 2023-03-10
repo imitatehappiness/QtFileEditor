@@ -5,10 +5,11 @@
 #include <QStandardItemModel>
 #include <QDir>
 
-#include "notification.h"
-#include "codeeditor.h"
-
 QT_BEGIN_NAMESPACE
+
+class Notification;
+class CodeEditor;
+
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
