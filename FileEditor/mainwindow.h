@@ -8,6 +8,7 @@
 QT_BEGIN_NAMESPACE
 class Notification;
 class CodeEditor;
+class DirManager;
 namespace Ui {
     class MainWindow;
 }
@@ -36,10 +37,16 @@ private slots:
     void fileClose();
     /// Слот выбора директории для заполнения модели
     void selectDirectory();
-    /// Слот нажатия контекстного меню элемента модели "Открыть"
+    /// Слот нажатия контекстного меню элемента модели "Открыть Файл"
     void treeMenuOpen(bool);
-    /// Слот нажатия контекстного меню элемента модели "Удалить"
+    /// Слот нажатия контекстного меню элемента модели "Удалить Файл/Папку"
     void treeMenuDelete(bool);
+    /// Слот нажатия контекстного меню элемента модели "Создать папку"
+    void treeMenuCreateFolder(bool);
+    /// Слот нажатия контекстного меню элемента модели "Создать файл"
+    void treeMenuCreateFile(bool);
+    /// Слот нажатия контекстного меню элемента модели "Отобразить файл"
+    void treeMenuDisplay(bool);
 private:
     /// Открытие конкретного файла через путь к нему
     void fileOpen(QString& path);
@@ -47,21 +54,20 @@ private:
     void fillModel(QDir dir);
     /// Отображение контекстного меню элемента модели
     void treeMenu(const QPoint &pos);
-    /// Удаление конкретной папки
-    bool removeDir(const QString &path);
-
 private:
     Ui::MainWindow *ui;
     /// Имя текущего файла
     QString mFilename;
     /// Лейбл статус бара
-    QLabel* mLabelFilename;
+    QLabel* mLabelFilename = nullptr;
     /// Объект отвечающий за всплывающие уведомления
-    Notification* mNotification;
+    Notification* mNotification = nullptr;
     /// Модель директорий
-    QStandardItemModel* mModel;
+    QStandardItemModel* mModel = nullptr;
     /// Путь до текущего файла
     QString mPath;
     /// Редактор файлов
-    CodeEditor* mCodeEditor;
+    CodeEditor* mCodeEditor = nullptr;
+    /// Менеджер директорий
+    DirManager* mDirManager = nullptr;
 };

@@ -7,6 +7,14 @@ DirManager::DirManager(QStandardItemModel& model, QDir dir)
     mTypeFileIgnore.append({"moc", "qrc", "ui"});
 }
 
+QStandardItem *DirManager::createFile(const QString &path, const QString &name, const QString &type){
+    QStandardItem* item = new QStandardItem(name);
+    item->setData(type, Qt::UserRole + 1);
+    item->setData(path + "/" + name, Qt::UserRole + 2);
+    setFont(*item);
+    setIcon(*item);
+    return item;
+}
 
 void DirManager::fillTree(){
     mModel.clear();
@@ -19,20 +27,19 @@ void DirManager::fillTree(){
     QFileInfo file(path);
 
     if(file.exists()){
-        QStandardItem* item = new QStandardItem(filename);
-        file.isFile() ? item->setData("file", Qt::UserRole + 1) :
-                        item->setData("folder", Qt::UserRole + 1);
-
-        item->setData(path, Qt::UserRole + 2);
-
-        setFont(*item);
-        setIcon(*item);
+        QString type;
+        type = file.isFile() ? "file" : "folder";
+        QStandardItem* item = createFile(path, filename, type);
         mModel.appendRow(item);
 
         findChildrenDir(item, mDir);
     }
 
     emit finished(true);
+}
+
+void DirManager::setDir(const QDir &newDir){
+    mDir = newDir;
 }
 
 void DirManager::findChildrenDir(QStandardItem* item, QDir dir){
@@ -60,13 +67,11 @@ void DirManager::findChildrenDir(QStandardItem* item, QDir dir){
                 continue;
             }
         }
-        QStandardItem* childItem = new QStandardItem(fileList[i]);
-        file.isFile() ? childItem->setData("file", Qt::UserRole + 1) :
-                        childItem->setData("folder", Qt::UserRole + 1);
 
-        childItem->setData(newPath, Qt::UserRole + 2);
-        setFont(*childItem);
-        setIcon(*childItem);
+        QString type;
+        type = file.isFile() ?  "file" : "folder";
+        QStandardItem* childItem = createFile(path, fileList[i], type);
+        mModel.appendRow(item);
 
         item->appendRow(childItem);
 
@@ -94,6 +99,15 @@ void DirManager::setIcon(QStandardItem &item){
     }else{
         item.setIcon(QIcon("resources/icons/file.png"));
     }
+}
+
+bool DirManager::removeDir(const QString& path){
+    QDir dir(path);
+    return dir.removeRecursively();
+}
+
+bool DirManager::removeFile(const QString &path){
+    return QDir().remove(path);
 }
 
 QString DirManager::getFilenameFromPath(QString &path){

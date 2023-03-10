@@ -17,6 +17,14 @@ public:
     void setFont(QStandardItem& item);
     /// Установка иконки для элемента модели
     void setIcon(QStandardItem& item);
+    /// Установка новой директории
+    void setDir(const QDir &newDir);
+    /// Создание элемента модели (файл/папка)
+    QStandardItem* createFile(const QString& path, const QString& name, const QString& type);
+    /// Удаление конкретной папки
+    bool removeDir(const QString &path);
+    /// Удаление файл
+    bool removeFile(const QString &path);
 private:
     /// Получение имени из пути
     QString getFilenameFromPath(QString& path);
@@ -39,5 +47,6 @@ private:
     QVector<QString> mTypeFile;
     /// Список недопустимых файлов среди допустимых
     QVector<QString> mTypeFileIgnore;
+
 };
 

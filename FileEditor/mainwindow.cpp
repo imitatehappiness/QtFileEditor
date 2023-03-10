@@ -9,6 +9,7 @@
 #include <QModelIndex>
 #include <QtGui>
 #include <QThread>
+#include <QDir>
 
 #include "dirmanager.h"
 #include "codeeditor.h"
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowIcon(QIcon("resources/icons/appIcon.png"));
     setWindowTitle("File Editor");
+    setWindowOpacity(0.95);
 
     QMenu *menu = menuBar()->addMenu("&Directory");
     auto *selectDir = new QAction("&Select", this);
@@ -51,10 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->statusbar->addWidget(mLabelFilename);
 
     mNotification = new Notification(this);
-
-    setWindowOpacity(0.95);
-
     mModel = new QStandardItemModel(ui->tV_directories);
+    mDirManager = new DirManager(*mModel, QDir(mPath));
 
     ui->tV_directories->setEditTriggers(QTreeView::NoEditTriggers);
     ui->tV_directories->setSelectionBehavior(QTreeView::SelectRows);
@@ -71,6 +71,7 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::fileCreate(){
+    mCodeEditor->setReadOnly(false);
     mFilename = QInputDialog::getText(this, tr("Create file"), tr("Enter the file name:"), QLineEdit::Normal);
     if(mFilename.size() > 0){
         mCodeEditor->clear();
@@ -79,6 +80,7 @@ void MainWindow::fileCreate(){
 }
 
 void MainWindow::fileOpen(){
+    mCodeEditor->setReadOnly(false);
     mFilename = QFileDialog::getOpenFileName(this, "Open file", mFilename, "*.txt *.c *.cpp *.h *.qrc *.qss *.hpp *.pro *.c *.md");
     if(mFilename==""){
         return;
@@ -89,6 +91,30 @@ void MainWindow::fileOpen(){
         stream.setCodec("UTF-8");
         QString buf = stream.readAll();
         mCodeEditor->appendPlainText(buf);
+        mLabelFilename->setText(mFilename);
+    }else{
+        QMessageBox mBox;
+        mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
+        mBox.setIcon(QMessageBox::Warning);
+        mBox.setText("File opening error!");
+        mBox.setButtonText(QMessageBox::Ok, "Ok");
+        mBox.exec();
+    }
+    file.close();
+}
+
+void MainWindow::fileOpen(QString &path){
+    mFilename = path;
+    if (mFilename == ""){
+        return;
+    }
+
+    QFile file(mFilename);
+    if(file.open(QIODevice::ReadWrite)){
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        QString buf = stream.readAll();
+        mCodeEditor->setPlainText(buf);
         mLabelFilename->setText(mFilename);
     }else{
         QMessageBox mBox;
@@ -167,10 +193,11 @@ void MainWindow::fillModel(QDir dir){
     if(dir.path() == "" || dir.path() == "."){
         return;
     }
-    DirManager* dm = new DirManager(*mModel, QDir(mPath));
-    QThread* thread = new QThread();
-    dm->moveToThread(thread);
 
+    DirManager* dm = new DirManager(*mModel, mPath);
+    QThread* thread = new QThread();
+
+    dm->moveToThread(thread);
     // При запуске потока запускаем выполнение метода class::process()
     connect(thread, &QThread::started, dm, &DirManager::fillTree);
     // Также, по сигналу finished отправляем команду на завершение потока
@@ -194,23 +221,22 @@ void MainWindow::treeMenu(const QPoint &pos){
     QModelIndex index = curIndex.sibling(curIndex.row(), 0);
     if (index.isValid()){
 
-        if(mModel->itemFromIndex(index)->data(Qt::UserRole + 1).toString() != "folder"){
+        if(mModel->itemFromIndex(index)->data(Qt::UserRole + 1).toString() == "file"){
+            menu.addAction (QIcon("resources/icons/display.png"), QStringLiteral("Display"), this, SLOT (treeMenuDisplay(bool)));
             menu.addAction (QIcon("resources/icons/fileIcons/open_file.png"), QStringLiteral("Open"), this, SLOT (treeMenuOpen(bool)));
-
+            menu.addAction (QIcon("resources/icons/fileIcons/delete_file.png"), QStringLiteral("Delete"), this, SLOT (treeMenuDelete(bool)));
         }
-        menu.addAction (QIcon("resources/icons/fileIcons/delete_file.png"), QStringLiteral("Delete"), this, SLOT (treeMenuDelete(bool)));
-
-
+        if(mModel->itemFromIndex(index)->data(Qt::UserRole + 1).toString() == "folder"){
+            menu.addAction (QIcon("resources/icons/folder_black.png"), QStringLiteral("Create folder"), this, SLOT (treeMenuCreateFolder(bool)));
+            menu.addAction (QIcon("resources/icons/file_black.png"), QStringLiteral("Create file"), this, SLOT (treeMenuCreateFile(bool)));
+            menu.addAction (QIcon("resources/icons/fileIcons/delete_file.png"), QStringLiteral("Delete"), this, SLOT (treeMenuDelete(bool)));
+        }
     }
     menu.exec(QCursor::pos());
 }
 
-bool MainWindow::removeDir(const QString& path){
-    QDir dir(path);
-    return dir.removeRecursively();
-}
-
 void MainWindow::treeMenuOpen(bool /*checked*/){
+    mCodeEditor->setReadOnly(false);
     QModelIndex curIndex = ui->tV_directories->currentIndex();
     QModelIndex index = curIndex.sibling (curIndex.row (), 0);
     if(index.isValid()){
@@ -221,7 +247,7 @@ void MainWindow::treeMenuOpen(bool /*checked*/){
 }
 
 void MainWindow::treeMenuDelete(bool){
-    int ret = QMessageBox::question(this, "Delete file", "Are you sure?" , QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel);
+    int ret = QMessageBox::question(this, "Delete", "Are you sure?" , QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel);
     if(ret == QMessageBox::Yes){
         QModelIndex curIndex = ui->tV_directories->currentIndex();
 
@@ -229,8 +255,7 @@ void MainWindow::treeMenuDelete(bool){
         if(index.isValid()){
             QStandardItem* item = mModel->itemFromIndex(index);
             QString path = item->data(Qt::UserRole + 2).toString();
-            QDir dir;
-            bool res = QFileInfo(path).isDir() ? removeDir(path) : dir.remove(path);
+            bool res = QFileInfo(path).isDir() ? mDirManager->removeDir(path) : mDirManager->removeFile(path);
             res ?  mNotification->setNotificationText("Deleted: " + path) :
                    mNotification->setNotificationText("Deletion Error: " + path) ;
 
@@ -241,28 +266,41 @@ void MainWindow::treeMenuDelete(bool){
     }
 }
 
-void MainWindow::fileOpen(QString &path){
-    mFilename = path;
-    if (mFilename == ""){
-        return;
+void MainWindow::treeMenuCreateFolder(bool){
+    QString name = QInputDialog::getText(this, tr("Create folder"), tr("Enter the folder name:"), QLineEdit::Normal);
+    QModelIndex curIndex = ui->tV_directories->currentIndex();
+    QModelIndex index = curIndex.sibling (curIndex.row (), 0);
+    if(index.isValid() && name.size() > 0){
+        QStandardItem* item = mModel->itemFromIndex(index);
+        QString path = item->data(Qt::UserRole + 2).toString();
+        QDir(path).mkdir(name);
+        QStandardItem* newFolder = mDirManager->createFile(path, name, "folder");
+        item->appendRow(newFolder);
     }
-
-    QFile file(mFilename);
-    if(file.open(QIODevice::ReadWrite)){
-        QTextStream stream(&file);
-        stream.setCodec("UTF-8");
-        QString buf = stream.readAll();
-        mCodeEditor->setPlainText(buf);
-        mLabelFilename->setText(mFilename);
-    }else{
-        QMessageBox mBox;
-        mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
-        mBox.setIcon(QMessageBox::Warning);
-        mBox.setText("File opening error!");
-        mBox.setButtonText(QMessageBox::Ok, "Ok");
-        mBox.exec();
-    }
-    file.close();
 }
 
+void MainWindow::treeMenuCreateFile(bool){
+    QString name = QInputDialog::getText(this, tr("Create file"), tr("Enter the file name:"), QLineEdit::Normal);
+    QModelIndex curIndex = ui->tV_directories->currentIndex();
+    QModelIndex index = curIndex.sibling (curIndex.row (), 0);
+    if(index.isValid() && name.size() > 0){
+        QStandardItem* item = mModel->itemFromIndex(index);
+        QString path = item->data(Qt::UserRole + 2).toString();
+        QFile file(path + "/" + name);
+        if(file.open(QIODevice::WriteOnly)){
+            QStandardItem* newFile = mDirManager->createFile(path, name, "file");
+            item->appendRow(newFile);
+        }
+    }
+}
 
+void MainWindow::treeMenuDisplay(bool){
+    mCodeEditor->setReadOnly(true);
+    QModelIndex curIndex = ui->tV_directories->currentIndex();
+    QModelIndex index = curIndex.sibling (curIndex.row (), 0);
+    if(index.isValid()){
+        QStandardItem* item = mModel->itemFromIndex(index);
+        QString path = item->data(Qt::UserRole + 2).toString();
+        fileOpen(path);
+    }
+}

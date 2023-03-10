@@ -12,5 +12,8 @@
         <file>icons/file.png</file>
         <file>icons/root-directory.png</file>
         <file>icons/clear.png</file>
+        <file>icons/file_black.png</file>
+        <file>icons/folder_black.png</file>
+        <file>icons/display.png</file>
     </qresource>
 </RCC>
