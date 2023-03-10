@@ -6,11 +6,11 @@
 #include <QDir>
 
 QT_BEGIN_NAMESPACE
-
 class Notification;
 class CodeEditor;
-
-namespace Ui { class MainWindow; }
+namespace Ui {
+    class MainWindow;
+}
 QT_END_NAMESPACE
 
 /*!

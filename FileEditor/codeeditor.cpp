@@ -1,9 +1,7 @@
-
 #include "codeeditor.h"
 
 #include <QPainter>
 #include <QTextBlock>
-
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent){
     lineNumberArea = new LineNumberArea(this);

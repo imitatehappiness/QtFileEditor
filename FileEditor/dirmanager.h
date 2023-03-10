@@ -3,8 +3,6 @@
 #include <QObject>
 #include <QStandardItemModel>
 #include <QDir>
-#include <QVector>
-#include <QString>
 
 /*!
  * \class DirManager

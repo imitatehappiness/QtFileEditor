@@ -4,8 +4,7 @@
 #include <QProxyStyle>
 #include <QStyleFactory>
 #include <QFile>
-
-#include "notification.h"
+#include <QMessageBox>
 
 int main(int argc, char *argv[]){
 
@@ -16,10 +15,13 @@ int main(int argc, char *argv[]){
     styleFile.open(QFile::ReadOnly);
     QString styleQSS = styleFile.readAll();
 
-    if (styleQSS.length() == 0){
-        Notification notification;
-        notification.setNotificationText("Error appstyles.qss reading");
-        notification.show();
+    if (styleQSS.size() == 0){
+        QMessageBox mBox;
+        mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
+        mBox.setIcon(QMessageBox::Warning);
+        mBox.setText("Error appstyles.qss reading! \nThe program may not work correctly!");
+        mBox.setButtonText(QMessageBox::Ok, "Ok");
+        mBox.exec();
     }
 
     a.setStyleSheet(styleQSS);

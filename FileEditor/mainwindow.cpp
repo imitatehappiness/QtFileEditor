@@ -8,7 +8,6 @@
 #include <QDebug>
 #include <QModelIndex>
 #include <QtGui>
-
 #include <QThread>
 
 #include "dirmanager.h"
@@ -90,7 +89,6 @@ void MainWindow::fileOpen(){
         stream.setCodec("UTF-8");
         QString buf = stream.readAll();
         mCodeEditor->appendPlainText(buf);
-        //ui->tE_textEditor->setText(buf);
         mLabelFilename->setText(mFilename);
     }else{
         QMessageBox mBox;
