@@ -5,7 +5,7 @@ QMainWindow {
 QTreeView {
     selection-background-color: green;
     background-color: rgb(24, 24, 24);
-    border: 1px solid #eee;
+    border: 1px solid rgb(24, 24, 24);
     border-radius: 5px;
     color: #eee;
 }
@@ -20,8 +20,17 @@ QHeaderView::section {
 }
 
 QTextEdit {
+    font: 12pt "Consolas";
     background-color: rgb(24, 24, 24);
     border: 1px solid #eee;
+    border-radius: 5px;
+    color: #eee;
+}
+
+QPlainTextEdit {
+    font: 12pt "Consolas";
+    background-color: rgb(24, 24, 24);
+    border: 1px solid rgb(24, 24, 24);
     border-radius: 5px;
     color: #eee;
 }

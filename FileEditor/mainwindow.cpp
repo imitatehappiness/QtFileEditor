@@ -25,6 +25,10 @@ MainWindow::MainWindow(QWidget *parent)
     auto *selectDir = new QAction("&Select", this);
     auto *clearDir = new QAction("&Clear", this);
 
+    mCodeEditor = new CodeEditor(this);
+    QGridLayout* grid = new QGridLayout();
+    grid->addWidget(mCodeEditor);
+    ui->frame_2->setLayout(grid);
     selectDir->setIcon(QIcon("resources/icons/root-directory.png"));
     clearDir->setIcon(QIcon("resources/icons/clear.png"));
 
@@ -68,7 +72,7 @@ MainWindow::~MainWindow(){
 void MainWindow::fileCreate(){
     mFilename = QInputDialog::getText(this, tr("Create file"), tr("Enter the file name:"), QLineEdit::Normal);
     if(mFilename.size() > 0){
-        ui->tE_textEditor->clear();
+        mCodeEditor->clear();
         mLabelFilename->setText(mFilename);
     }
 }
@@ -83,7 +87,8 @@ void MainWindow::fileOpen(){
         QTextStream stream(&file);
         stream.setCodec("UTF-8");
         QString buf = stream.readAll();
-        ui->tE_textEditor->setText(buf);
+        mCodeEditor->appendPlainText(buf);
+        //ui->tE_textEditor->setText(buf);
         mLabelFilename->setText(mFilename);
     }else{
         QMessageBox mBox;
@@ -102,7 +107,7 @@ void MainWindow::fileSave(){
     if(info.exists()){
         QFile file(mFilename);
         if(file.open(QIODevice::WriteOnly)){
-            QString buf = ui->tE_textEditor->toPlainText();
+            QString buf = mCodeEditor->toPlainText();
             QTextStream stream(&file);
             stream << buf;
             file.close();
@@ -124,7 +129,7 @@ void MainWindow::fileSaveAs(){
     QFile file(mFilename);
     if(file.open(QIODevice::WriteOnly)){
         QTextStream stream(&file);
-        QString buf = ui->tE_textEditor->toPlainText();
+        QString buf = mCodeEditor->toPlainText();
         stream << buf;
         file.close();
         mNotification->setNotificationText("The file has been saved");
@@ -151,7 +156,7 @@ void MainWindow::fileClose(){
     }
     else{
         mFilename = "";
-        ui->tE_textEditor->clear();
+        mCodeEditor->clear();
         mLabelFilename->setText("");
         return;
     }
@@ -231,7 +236,7 @@ void MainWindow::treeMenuDelete(bool){
 
             mNotification->show();
             mModel->removeRow(index.row(), index.parent());
-            ui->tE_textEditor->clear();
+            mCodeEditor->clear();
         }
     }
 }
@@ -247,7 +252,7 @@ void MainWindow::fileOpen(QString &path){
         QTextStream stream(&file);
         stream.setCodec("UTF-8");
         QString buf = stream.readAll();
-        ui->tE_textEditor->setText(buf);
+        mCodeEditor->setPlainText(buf);
         mLabelFilename->setText(mFilename);
     }else{
         QMessageBox mBox;
