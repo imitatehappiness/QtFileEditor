@@ -15,5 +15,6 @@
         <file>icons/file_black.png</file>
         <file>icons/folder_black.png</file>
         <file>icons/display.png</file>
+        <file>icons/search.png</file>
     </qresource>
 </RCC>

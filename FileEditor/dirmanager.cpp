@@ -3,7 +3,7 @@
 DirManager::DirManager(QStandardItemModel& model, QDir dir)
     : mModel(model),
       mDir(dir){
-    mTypeFile.append({"cpp", "h", "hpp", "md", "c", "pro", "qrc", "ui", "txt", "qss"});
+    mTypeFile.append({"cpp", "h", "hpp", "md", "c", "pro", "qrc", "ui", "txt", "qss", "xml", "json", "ini", "conf"});
     mTypeFileIgnore.append({"moc", "qrc", "ui"});
 }
 
@@ -71,7 +71,6 @@ void DirManager::findChildrenDir(QStandardItem* item, QDir dir){
         QString type;
         type = file.isFile() ?  "file" : "folder";
         QStandardItem* childItem = createFile(path, fileList[i], type);
-        mModel.appendRow(item);
 
         item->appendRow(childItem);
 

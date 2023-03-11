@@ -14,7 +14,7 @@
 #include "dirmanager.h"
 #include "codeeditor.h"
 #include "notification.h"
-
+#include "searchwidget.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow){
@@ -24,19 +24,36 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("File Editor");
     setWindowOpacity(0.95);
 
+    /// menuBar
     QMenu *menu = menuBar()->addMenu("&Directory");
     auto *selectDir = new QAction("&Select", this);
     auto *clearDir = new QAction("&Clear", this);
-
-    mCodeEditor = new CodeEditor(this);
-    QGridLayout* grid = new QGridLayout();
-    grid->addWidget(mCodeEditor);
-    ui->frame_2->setLayout(grid);
     selectDir->setIcon(QIcon("resources/icons/root-directory.png"));
     clearDir->setIcon(QIcon("resources/icons/clear.png"));
-
     menu->addAction(selectDir);
     menu->addAction(clearDir);
+
+    /// Установка виджета mCodeEditor
+    mCodeEditor = new CodeEditor();
+    QGridLayout* gridEditor = new QGridLayout();
+    gridEditor->addWidget(mCodeEditor);
+    ui->frame_editor->setLayout(gridEditor);
+
+    mLabelFilename = new QLabel(this);
+    ui->statusbar->addWidget(mLabelFilename);
+
+    mModel = new QStandardItemModel(ui->tV_directories);
+    mModel->setHorizontalHeaderLabels(QStringList()<<QStringLiteral("Name"));
+
+    /// Настройка TreeView
+    ui->tV_directories->setEditTriggers(QTreeView::NoEditTriggers);
+    ui->tV_directories->setSelectionBehavior(QTreeView::SelectRows);
+    ui->tV_directories->setSelectionMode(QTreeView::SingleSelection);
+    ui->tV_directories->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tV_directories->setModel(mModel);
+
+    mDirManager = new DirManager(*mModel, QDir(mPath));
+    mNotification = new Notification();
 
     connect(selectDir, SIGNAL(triggered()), this, SLOT(selectDirectory()));
     connect(clearDir, &QAction::triggered, this, [=](){
@@ -48,26 +65,40 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pB_fileSave, SIGNAL(clicked()), this, SLOT(fileSave()));
     connect(ui->pB_fileSaveAs, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
     connect(ui->pB_fileClose, SIGNAL(clicked()), this, SLOT(fileClose()));
-
-    mLabelFilename = new QLabel();
-    ui->statusbar->addWidget(mLabelFilename);
-
-    mNotification = new Notification(this);
-    mModel = new QStandardItemModel(ui->tV_directories);
-    mDirManager = new DirManager(*mModel, QDir(mPath));
-
-    ui->tV_directories->setEditTriggers(QTreeView::NoEditTriggers);
-    ui->tV_directories->setSelectionBehavior(QTreeView::SelectRows);
-    ui->tV_directories->setSelectionMode(QTreeView::SingleSelection);
-    mModel->setHorizontalHeaderLabels(QStringList()<<QStringLiteral("Name"));
-    ui->tV_directories->setModel(mModel);
-
-    ui->tV_directories->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->pB_fileSearch, SIGNAL(clicked()), mCodeEditor, SIGNAL(showWidgetFileSearch()));
     connect(ui->tV_directories, &QTreeView::customContextMenuRequested, this, &MainWindow::treeMenu);
+
+    mSearch = new SearchWidget(mCodeEditor);
+    mSearch->hide();
+    /// Начать поиск
+    connect(mSearch, &SearchWidget::search, mCodeEditor, &CodeEditor::search);
+    /// Отображение виджета поиска
+    connect(ui->pB_fileSearch, &QPushButton::clicked, mSearch, [=](){
+        mSearch->show();
+    });
+    mCodeEditor->showMaximized();
 }
 
 MainWindow::~MainWindow(){
+    delete mCodeEditor;
+    delete mNotification;
     delete ui;
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event){
+    QMainWindow::resizeEvent(event);
+
+    mSearch->setGeometry(0,
+                mCodeEditor->height() - mSearch->height() + 20,
+                width(),
+                height());
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event){
+    int key = event->key();
+    if(event->modifiers() == (Qt::ControlModifier ) && key == Qt::Key_F) {
+        mSearch->show();
+    }
 }
 
 void MainWindow::fileCreate(){
@@ -135,6 +166,7 @@ void MainWindow::fileSave(){
         if(file.open(QIODevice::WriteOnly)){
             QString buf = mCodeEditor->toPlainText();
             QTextStream stream(&file);
+            stream.setCodec("UTF-8");
             stream << buf;
             file.close();
             mNotification->setNotificationText("The file has been saved");
@@ -155,6 +187,7 @@ void MainWindow::fileSaveAs(){
     QFile file(mFilename);
     if(file.open(QIODevice::WriteOnly)){
         QTextStream stream(&file);
+        stream.setCodec("UTF-8");
         QString buf = mCodeEditor->toPlainText();
         stream << buf;
         file.close();
@@ -186,7 +219,24 @@ void MainWindow::fileClose(){
         mLabelFilename->setText("");
         return;
     }
+}
 
+void MainWindow::search(const QString& str){
+
+    QList<QTextEdit::ExtraSelection> sel;
+    mCodeEditor->moveCursor(QTextCursor::Start);
+    while(mCodeEditor->find(str)){
+        QTextEdit::ExtraSelection extra;
+        extra.format.setBackground(QColor("green"));
+        extra.cursor = mCodeEditor->textCursor();
+        sel.append(extra);
+    }
+    if(sel.size() > 0){
+        mCodeEditor->setExtraSelections(sel);
+    }
+
+    mNotification->setNotificationText("Search result: " + QString::number(sel.size()));
+    mNotification->show();
 }
 
 void MainWindow::fillModel(QDir dir){
@@ -198,13 +248,13 @@ void MainWindow::fillModel(QDir dir){
     QThread* thread = new QThread();
 
     dm->moveToThread(thread);
-    // При запуске потока запускаем выполнение метода class::process()
+    /// При запуске потока запускаем выполнение метода class::process()
     connect(thread, &QThread::started, dm, &DirManager::fillTree);
-    // Также, по сигналу finished отправляем команду на завершение потока
+    /// По сигналу finished отправляем команду на завершение потока
     connect(dm, &DirManager::finished, thread, &QThread::quit);
-    // А потом удаляем экземпляр обработчика
+    /// Удаляем экземпляр обработчика
     connect(dm, &DirManager::finished, dm, &QObject::deleteLater);
-    // И наконец, когда закончит работу поток, удаляем и его
+    /// Удаляем поток
     connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
     thread->start();
@@ -303,4 +353,8 @@ void MainWindow::treeMenuDisplay(bool){
         QString path = item->data(Qt::UserRole + 2).toString();
         fileOpen(path);
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent* /*event*/){
+    QApplication::closeAllWindows();
 }

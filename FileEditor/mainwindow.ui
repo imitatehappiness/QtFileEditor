@@ -6,14 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>887</width>
-    <height>598</height>
+    <width>1019</width>
+    <height>579</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>0</height>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>1100</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -69,19 +81,6 @@
        <property name="verticalSpacing">
         <number>3</number>
        </property>
-       <item row="7" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="5" column="0">
         <widget class="QPushButton" name="pB_fileSaveAs">
          <property name="sizePolicy">
@@ -103,7 +102,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Save File As</string>
+          <string>Save file as</string>
          </property>
          <property name="text">
           <string/>
@@ -112,16 +111,16 @@
           <iconset resource="resources/resources.qrc">
            <normaloff>:/resources/icons/fileIcons/save_as_file.png</normaloff>:/resources/icons/fileIcons/save_as_file.png</iconset>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="pB_fileCreate">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pB_fileOpen">
          <property name="minimumSize">
           <size>
            <width>40</width>
@@ -135,14 +134,20 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>New File</string>
+          <string>Open file</string>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
           <iconset resource="resources/resources.qrc">
-           <normaloff>:/resources/icons/fileIcons/new_file.png</normaloff>:/resources/icons/fileIcons/new_file.png</iconset>
+           <normaloff>:/resources/icons/fileIcons/open_file.png</normaloff>:/resources/icons/fileIcons/open_file.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -167,7 +172,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Save File</string>
+          <string>Save file</string>
          </property>
          <property name="text">
           <string/>
@@ -175,6 +180,50 @@
          <property name="icon">
           <iconset resource="resources/resources.qrc">
            <normaloff>:/resources/icons/fileIcons/save_file.png</normaloff>:/resources/icons/fileIcons/save_file.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="pB_fileCreate">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>40</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>New file</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/resources/icons/fileIcons/new_file.png</normaloff>:/resources/icons/fileIcons/new_file.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -199,7 +248,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Close File</string>
+          <string>Close file</string>
          </property>
          <property name="text">
           <string/>
@@ -208,10 +257,35 @@
           <iconset resource="resources/resources.qrc">
            <normaloff>:/resources/icons/fileIcons/close_file.png</normaloff>:/resources/icons/fileIcons/close_file.png</iconset>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="pB_fileOpen">
+       <item row="8" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="0">
+        <widget class="QPushButton" name="pB_fileSearch">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>40</width>
@@ -221,18 +295,24 @@
          <property name="maximumSize">
           <size>
            <width>40</width>
-           <height>16777215</height>
+           <height>40</height>
           </size>
          </property>
          <property name="toolTip">
-          <string>Open File</string>
+          <string>Search in file</string>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
           <iconset resource="resources/resources.qrc">
-           <normaloff>:/resources/icons/fileIcons/open_file.png</normaloff>:/resources/icons/fileIcons/open_file.png</iconset>
+           <normaloff>:/resources/icons/search.png</normaloff>:/resources/icons/search.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -256,7 +336,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>300</width>
+         <width>350</width>
          <height>0</height>
         </size>
        </property>
@@ -297,7 +377,19 @@
         <enum>Qt::IgnoreAction</enum>
        </property>
       </widget>
-      <widget class="QFrame" name="frame_2">
+      <widget class="QFrame" name="frame_editor">
+       <property name="minimumSize">
+        <size>
+         <width>350</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="styleSheet">
         <string notr="true">    background-color: rgb(24, 24, 24);
 border-radius: 5px
@@ -319,7 +411,7 @@ border-radius: 5px
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>887</width>
+     <width>1019</width>
      <height>21</height>
     </rect>
    </property>

@@ -25,8 +25,12 @@ public:
     /// Ширина виджета нумерации строк
     int lineNumberAreaWidth();
 protected:
-    /// Переопределение метода рекомендуемого размера виджета
-    void resizeEvent(QResizeEvent *event) override;
+    void resizeEvent(QResizeEvent* event);
+signals:
+    void showWidgetFileSearch();
+public slots:
+    /// Слот поиска по файлу
+    void search(const QString& str);
 private slots:
     /// Слот обновления ширины виджета нумерции строк
     void updateLineNumberAreaWidth(int newBlockCount);
@@ -36,7 +40,7 @@ private slots:
     void updateLineNumberArea(const QRect &rect, int dy);
 private:
     /// Виджет нумерации строк
-    QWidget *lineNumberArea;
+    QWidget *mLineNumberArea = nullptr;
 };
 
 /*!

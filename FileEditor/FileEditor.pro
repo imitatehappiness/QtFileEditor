@@ -14,16 +14,19 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     notification.cpp \
+    searchwidget.cpp
 
 HEADERS += \
     codeeditor.h \
     dirmanager.h \
     mainwindow.h \
     notification.h \
+    searchwidget.h
 
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    searchwidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -33,6 +33,8 @@ QPlainTextEdit {
     border: 1px solid rgb(24, 24, 24);
     border-radius: 5px;
     color: #eee;
+    selection-background-color: green;
+    selection-color: #eee;
 }
 
 MainWindow{
@@ -42,6 +44,19 @@ MainWindow{
 
 QLabel{
     color: rgb(24, 24, 24);
+}
+
+QLineEdit{
+    background-color: rgb(238, 238, 238);
+    padding-left: 3px;
+    padding-rigth: 3px;
+    font: 10pt "Consolas";
+}
+
+QPushButton{
+    background-color: rgb(238, 238, 238);
+    color: rgb(24, 24, 24);
+    font: 10pt "Consolas";
 }
 
 QScrollBar:vertical {
@@ -73,6 +88,34 @@ QScrollBar::sub-line:vertical {
     subcontrol-origin: margin;
 }
 
+QScrollBar:horizontal {
+    background-color: rgb(24, 24, 24);
+    width: 10px;
+    margin: 3px 3px 3px 3px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #eee;
+    border-radius: 10px;
+    min-height: 5px;
+}
+
+QScrollBar::add-line:horizontal {
+    background-color: rgb(24, 24, 24);
+    height: 0px;
+    width: 10px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    background-color: rgb(24, 24, 24);
+    height: 0px;
+    width: 10px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
 
 QToolTip{
     background-color: rgba(24, 24, 24, 75%);

@@ -47,6 +47,5 @@ private:
     QVector<QString> mTypeFile;
     /// Список недопустимых файлов среди допустимых
     QVector<QString> mTypeFileIgnore;
-
 };
 

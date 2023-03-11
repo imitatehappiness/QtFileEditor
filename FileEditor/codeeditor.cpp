@@ -1,11 +1,12 @@
 #include "codeeditor.h"
 
 #include <QPainter>
+#include <QDebug>
 #include <QTextBlock>
+#include <QKeyEvent>
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent){
-    lineNumberArea = new LineNumberArea(this);
-
+    mLineNumberArea = new LineNumberArea(this);
     /// blockCountChanged - Этот сигнал выдается всякий раз, когда изменяется количество блоков.
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
     /// updateRequest - Этот сигнал выдается, когда текстовому документу требуется обновление указанного rect.
@@ -13,8 +14,10 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent){
     /// cursorPositionChanged - Этот сигнал выдается всякий раз, когда изменяется положение курсора.
     connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
 
+
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
+    setFocus();
 }
 
 
@@ -31,6 +34,19 @@ int CodeEditor::lineNumberAreaWidth(){
     return space + 30;
 }
 
+void CodeEditor::search(const QString& str){
+    QList<QTextEdit::ExtraSelection> sel;
+    moveCursor(QTextCursor::Start);
+    while(find(str)){
+        QTextEdit::ExtraSelection extra;
+        extra.format.setBackground(QColor("green"));
+        extra.cursor = textCursor();
+        sel.append(extra);
+    }
+    if(sel.size() > 0){
+        setExtraSelections(sel);
+    }
+}
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */){
     /// Устанавливает отступ вокруг области прокрутки на левое, верхнее, правое и нижнее.
@@ -38,19 +54,19 @@ void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */){
 }
 
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy){
-    dy ? lineNumberArea->scroll(0, dy) : lineNumberArea->update(0, rect.y(), lineNumberArea->width(), rect.height());
+    dy ? mLineNumberArea->scroll(0, dy) : mLineNumberArea->update(0, rect.y(), mLineNumberArea->width(), rect.height());
 
     if (rect.contains(viewport()->rect()))
         updateLineNumberAreaWidth(0);
 }
 
-void CodeEditor::resizeEvent(QResizeEvent *e){
-    QPlainTextEdit::resizeEvent(e);
-
+void CodeEditor::resizeEvent(QResizeEvent* event){
+    QPlainTextEdit::resizeEvent(event);
     /// resizeEvent для виджета нумерации строк
     QRect cr = contentsRect();
-    lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+    mLineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
+
 
 void CodeEditor::highlightCurrentLine(){
     QList<QTextEdit::ExtraSelection> extraSelections;
@@ -70,7 +86,7 @@ void CodeEditor::highlightCurrentLine(){
 }
 
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event){
-    QPainter painter(lineNumberArea);
+    QPainter painter(mLineNumberArea);
     /// Заливка области нумерции строк цветом
     painter.fillRect(event->rect(), QColor(24,24,24));
 
@@ -90,7 +106,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event){
             QString number = QString::number(blockNumber + 1);
             painter.setPen(QColor("green"));
             painter.setFont(QFont("Consolas", 12));
-            painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
+            painter.drawText(0, top, mLineNumberArea->width(), fontMetrics().height(),
                              Qt::AlignHCenter, number);
         }
 

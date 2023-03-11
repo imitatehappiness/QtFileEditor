@@ -9,6 +9,7 @@ QT_BEGIN_NAMESPACE
 class Notification;
 class CodeEditor;
 class DirManager;
+class SearchWidget;
 namespace Ui {
     class MainWindow;
 }
@@ -35,6 +36,8 @@ private slots:
     void fileSaveAs();
     /// Слот закрытия файла
     void fileClose();
+    /// Слот поиска по файлу
+    void search(const QString& str);
     /// Слот выбора директории для заполнения модели
     void selectDirectory();
     /// Слот нажатия контекстного меню элемента модели "Открыть Файл"
@@ -47,6 +50,13 @@ private slots:
     void treeMenuCreateFile(bool);
     /// Слот нажатия контекстного меню элемента модели "Отобразить файл"
     void treeMenuDisplay(bool);
+protected:
+    /// Переопределенный метод закрытия приложения
+    void closeEvent(QCloseEvent* event) override;
+    /// Переопределение метода рекомендуемого размера виджета
+    void resizeEvent(QResizeEvent* event) override;
+    ///
+    void keyPressEvent(QKeyEvent* event) override;
 private:
     /// Открытие конкретного файла через путь к нему
     void fileOpen(QString& path);
@@ -54,6 +64,8 @@ private:
     void fillModel(QDir dir);
     /// Отображение контекстного меню элемента модели
     void treeMenu(const QPoint &pos);
+    /// Установка поиска по тексту в нужное положение
+    void setPositionSearchWidget();
 private:
     Ui::MainWindow *ui;
     /// Имя текущего файла
@@ -70,4 +82,6 @@ private:
     CodeEditor* mCodeEditor = nullptr;
     /// Менеджер директорий
     DirManager* mDirManager = nullptr;
+    /// Виджет потска по файлу
+    SearchWidget* mSearch = nullptr;
 };
