@@ -15,6 +15,7 @@
 #include "codeeditor.h"
 #include "notification.h"
 #include "searchwidget.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow){
@@ -74,9 +75,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(mSearch, &SearchWidget::search, mCodeEditor, &CodeEditor::search);
     /// Отображение виджета поиска
     connect(ui->pB_fileSearch, &QPushButton::clicked, mSearch, [=](){
+        mSearch->move(0, mCodeEditor->height() - mSearch->height());
         mSearch->show();
     });
-    mCodeEditor->showMaximized();
 }
 
 MainWindow::~MainWindow(){
@@ -89,7 +90,7 @@ void MainWindow::resizeEvent(QResizeEvent* event){
     QMainWindow::resizeEvent(event);
 
     mSearch->setGeometry(0,
-                mCodeEditor->height() - mSearch->height() + 20,
+                mCodeEditor->height() - mSearch->height(),
                 width(),
                 height());
 }

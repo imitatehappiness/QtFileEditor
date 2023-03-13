@@ -51,6 +51,8 @@ QLineEdit{
     padding-left: 3px;
     padding-rigth: 3px;
     font: 10pt "Consolas";
+    selection-background-color: green;
+
 }
 
 QPushButton{
