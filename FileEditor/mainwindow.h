@@ -55,7 +55,7 @@ protected:
     void closeEvent(QCloseEvent* event) override;
     /// Переопределение метода рекомендуемого размера виджета
     void resizeEvent(QResizeEvent* event) override;
-    ///
+    /// Переопределение метода нажатия клавиш
     void keyPressEvent(QKeyEvent* event) override;
 private:
     /// Открытие конкретного файла через путь к нему

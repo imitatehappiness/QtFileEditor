@@ -25,8 +25,10 @@ public:
     /// Ширина виджета нумерации строк
     int lineNumberAreaWidth();
 protected:
+    /// Переопределение метода рекомендуемого размера виджета
     void resizeEvent(QResizeEvent* event);
 signals:
+    /// Сигнал отображения виджета поиска по тексту
     void showWidgetFileSearch();
 public slots:
     /// Слот поиска по файлу
