@@ -65,7 +65,7 @@ QPushButton{
 QPushButton:pressed{
     background-color: rgb(238, 238, 238);
     color: rgb(24, 24, 24);
-    font: 12pt "Consolas";
+    font: 11pt "Consolas";
 }
 
 QScrollBar:vertical {
