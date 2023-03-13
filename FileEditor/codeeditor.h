@@ -1,13 +1,10 @@
 #pragma once
 
 #include <QPlainTextEdit>
-
-QT_BEGIN_NAMESPACE
-class QPaintEvent;
-class QResizeEvent;
-class QSize;
-class QWidget;
-QT_END_NAMESPACE
+#include <QPaintEvent>
+#include <QResizeEvent>
+#include <QSize>
+#include <QWidget>
 
 class LineNumberArea;
 
