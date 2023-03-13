@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tV_directories->setModel(mModel);
 
     mDirManager = new DirManager(*mModel, QDir(mPath));
-    mNotification = new Notification();
+    mNotification = new Notification(this);
 
     connect(selectDir, SIGNAL(triggered()), this, SLOT(selectDirectory()));
     connect(clearDir, &QAction::triggered, this, [=](){
@@ -222,23 +222,6 @@ void MainWindow::fileClose(){
     }
 }
 
-void MainWindow::search(const QString& str){
-
-    QList<QTextEdit::ExtraSelection> sel;
-    mCodeEditor->moveCursor(QTextCursor::Start);
-    while(mCodeEditor->find(str)){
-        QTextEdit::ExtraSelection extra;
-        extra.format.setBackground(QColor("green"));
-        extra.cursor = mCodeEditor->textCursor();
-        sel.append(extra);
-    }
-    if(sel.size() > 0){
-        mCodeEditor->setExtraSelections(sel);
-    }
-
-    mNotification->setNotificationText("Search result: " + QString::number(sel.size()));
-    mNotification->show();
-}
 
 void MainWindow::fillModel(QDir dir){
     if(dir.path() == "" || dir.path() == "."){

@@ -36,8 +36,6 @@ private slots:
     void fileSaveAs();
     /// Слот закрытия файла
     void fileClose();
-    /// Слот поиска по файлу
-    void search(const QString& str);
     /// Слот выбора директории для заполнения модели
     void selectDirectory();
     /// Слот нажатия контекстного меню элемента модели "Открыть Файл"
