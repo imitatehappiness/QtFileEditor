@@ -44,6 +44,7 @@ MainWindow{
 
 QLabel{
     color: rgb(24, 24, 24);
+    font: 10pt "Consolas";
 }
 
 QLineEdit{
@@ -132,7 +133,6 @@ QToolTip{
     border-radius: 10px;
     widht: 24px;
     font: 12pt "Consolas";
-
 }
 
 QMenu{
@@ -142,13 +142,11 @@ QMenu{
 QMenu::item{
     background-color: #eee;
     color: rgb(24, 24, 24);
-
 }
 
 QMenu::item:selected{
     background-color: green;
     color: #eee;
-
 }
 
 QMenuBar{
