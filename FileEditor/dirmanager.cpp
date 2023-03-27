@@ -10,7 +10,8 @@ DirManager::DirManager(QStandardItemModel& model, QDir dir)
 QStandardItem *DirManager::createFile(const QString &path, const QString &name, const QString &type){
     QStandardItem* item = new QStandardItem(name);
     item->setData(type, Qt::UserRole + 1);
-    item->setData(path + "/" + name, Qt::UserRole + 2);
+    mDir.path() == path ? item->setData(path, Qt::UserRole + 2) :
+                          item->setData(path + "/" + name, Qt::UserRole + 2);
     setFont(*item);
     setIcon(*item);
     return item;

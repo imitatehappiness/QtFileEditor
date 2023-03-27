@@ -291,7 +291,7 @@ void MainWindow::treeMenuDelete(bool){
             QString path = item->data(Qt::UserRole + 2).toString();
             bool res = QFileInfo(path).isDir() ? mDirManager->removeDir(path) : mDirManager->removeFile(path);
             res ?  mNotification->setNotificationText("Deleted: " + path) :
-                   mNotification->setNotificationText("Deletion Error: " + path) ;
+                   mNotification->setNotificationText("Deletion Error: " + path);
 
             mNotification->show();
             mModel->removeRow(index.row(), index.parent());
@@ -307,9 +307,15 @@ void MainWindow::treeMenuCreateFolder(bool){
     if(index.isValid() && name.size() > 0){
         QStandardItem* item = mModel->itemFromIndex(index);
         QString path = item->data(Qt::UserRole + 2).toString();
-        QDir(path).mkdir(name);
-        QStandardItem* newFolder = mDirManager->createFile(path, name, "folder");
-        item->appendRow(newFolder);
+        qDebug() << path;
+        if(QDir(path).mkdir(name)){
+            QStandardItem* newFolder = mDirManager->createFile(path, name, "folder");
+            item->appendRow(newFolder);
+        }else{
+            mNotification->setNotificationText("Create Error: " + path);
+            mNotification->show();
+        }
+
     }
 }
 
