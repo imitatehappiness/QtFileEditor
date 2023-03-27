@@ -7,10 +7,10 @@ DirManager::DirManager(QStandardItemModel& model, QDir dir)
     mTypeFileIgnore.append({"moc", "qrc", "ui"});
 }
 
-QStandardItem *DirManager::createFile(const QString &path, const QString &name, const QString &type){
+QStandardItem *DirManager::createFile(const QString &path, const QString &name, const QString &type, bool isRoot){
     QStandardItem* item = new QStandardItem(name);
     item->setData(type, Qt::UserRole + 1);
-    mDir.path() == path ? item->setData(path, Qt::UserRole + 2) :
+    isRoot ? item->setData(path, Qt::UserRole + 2) :
                           item->setData(path + "/" + name, Qt::UserRole + 2);
     setFont(*item);
     setIcon(*item);
@@ -30,7 +30,7 @@ void DirManager::fillTree(){
     if(file.exists()){
         QString type;
         type = file.isFile() ? "file" : "folder";
-        QStandardItem* item = createFile(path, filename, type);
+        QStandardItem* item = createFile(path, filename, type, true);
         mModel.appendRow(item);
 
         findChildrenDir(item, mDir);

@@ -20,7 +20,7 @@ public:
     /// Установка новой директории
     void setDir(const QDir &newDir);
     /// Создание элемента модели (файл/папка)
-    QStandardItem* createFile(const QString& path, const QString& name, const QString& type);
+    QStandardItem* createFile(const QString& path, const QString& name, const QString& type, bool isRoot = false);
     /// Удаление конкретной папки
     bool removeDir(const QString &path);
     /// Удаление файл
