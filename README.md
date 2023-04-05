@@ -8,7 +8,7 @@
 
 ## About The Project
 
-The "QFileEditor" program is designed to work with files and directories on a computer. With it, you can open and view directory contents, add new folders and files, create new files, save changes to existing files, and open files for editing. In addition, the program allows you to search through the content of files.
+The "File Editor" program is designed to work with files and directories on a computer. With it, you can open and view directory contents, add new folders and files, create new files, save changes to existing files, and open files for editing. In addition, the program allows you to search through the content of files.
 
 >**Compiler:**  MinGW 5.3.0 32bit
 >
