@@ -24,8 +24,12 @@ The "File Editor" program is designed to work with files and directories on your
 ## Example
 
 <div align="center">
-  <video src="https://user-images.githubusercontent.com/79199956/224201431-6b78a831-a04c-4e58-b3f9-37d7f3485a5b.mp4"/>
+  <video src="https://github.com/imitatehappiness/QtFileEditor/assets/79199956/1935116e-e237-4e88-9ee9-b25be625d7b2"/>
 <div/>
+
+
+
+
 
 
 
