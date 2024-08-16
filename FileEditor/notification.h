@@ -8,43 +8,43 @@
 
 /*!
  * \class Notification
- * \class Класс отвечающий за всплывающие уведомления
+ * \brief The class responsible for popup notifications
  */
 class Notification : public QWidget{
     Q_OBJECT
-    /// Свойство полупрозрачности
+    /// Property for opacity
     Q_PROPERTY(float mNotificationOpacity READ getNotificationOpacity WRITE setNotificationOpacity)
-    /// Установка значения прозрачности
+    /// Set the opacity value
     void setNotificationOpacity(float opacity);
-    /// Получение значения прозрачности
+    /// Get the opacity value
     float getNotificationOpacity() const;
 public:
-    /// Конструктор
+    /// Constructor
     explicit Notification(QWidget *parent = 0);
 protected:
-    /// Фон будет отрисовываться через метод перерисовки
+    /// Background will be drawn via the paint event method
     void paintEvent(QPaintEvent *event);
 public slots:
-    /// Установка текста в уведомление
+    /// Set the text of the notification
     void setNotificationText(const QString& text);
-    /// Собственный метод показа виджета
-    /// Необходимо для преварительной настройки анимации
+    /// Custom method to show the widget
+    /// Necessary for pre-setting the animation
     void show();
 private slots:
-    /// Слот для запуска анимации скрытия
+    /// Slot to start the hide animation
     void hideAnimation();
-    /// По окончании анимации, в данном слоте делается проверка,
-    /// виден ли виджет, или его необходимо скрыть
+    /// After the animation ends, this slot checks
+    /// if the widget is visible or needs to be hidden
     void hide();
 private:
-    /// Label с сообщением
+    /// Label with the message
     QLabel mLabel;
-    /// Размещение для лейбла
+    /// Layout for the label
     QGridLayout mLayout;
-    /// Свойство анимации для всплывающего сообщения
+    /// Property animation for the popup message
     QPropertyAnimation mAnimation;
-    /// Свойства полупрозрачности виджета
+    /// Opacity property of the widget
     float mNotificationOpacity;
-    /// Таймер, по которому виджет будет скрыт
+    /// Timer to hide the widget
     QTimer *mTimer;
 };

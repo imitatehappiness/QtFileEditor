@@ -10,57 +10,57 @@ class LineNumberArea;
 
 /*!
  * \class CodeEditor
- * \brief Класс отвечающий за редактор кода и его обновление
+ * \brief The class responsible for the code editor and its updates
  */
 class CodeEditor : public QPlainTextEdit{
     Q_OBJECT
 public:
-    /// Конструктор
+    /// Constructor
     CodeEditor(QWidget *parent = nullptr);
-    /// Перерисовка виджета нумерации строк
+    /// Redraws the line number area widget
     void lineNumberAreaPaintEvent(QPaintEvent *event);
-    /// Ширина виджета нумерации строк
+    /// Returns the width of the line number area widget
     int lineNumberAreaWidth();
 protected:
-    /// Переопределение метода рекомендуемого размера виджета
+    /// Overrides the recommended size method for the widget
     void resizeEvent(QResizeEvent* event);
 signals:
-    /// Сигнал отображения виджета поиска по тексту
+    /// Signal to display the text search widget
     void showWidgetFileSearch();
 public slots:
-    /// Слот поиска по файлу
+    /// Slot for file search
     void search(const QString& str);
 private slots:
-    /// Слот обновления ширины виджета нумерции строк
+    /// Slot to update the width of the line number area widget
     void updateLineNumberAreaWidth(int newBlockCount);
-    /// Слот выделения строки, на которой находится указатель
+    /// Slot to highlight the line where the cursor is located
     void highlightCurrentLine();
-    /// Слот обновление виджета нумерции строк
+    /// Slot to update the line number area widget
     void updateLineNumberArea(const QRect &rect, int dy);
 private:
-    /// Виджет нумерации строк
+    /// Line number area widget
     QWidget *mLineNumberArea = nullptr;
 };
 
 /*!
  * \class LineNumberArea
- * \brief Класс отвечающий за виджет отображения нумерации строк в CodeEditor
+ * \brief The class responsible for the line number area widget in CodeEditor
  */
 class LineNumberArea : public QWidget{
 public:
-    /// Конструктор с парметрами
+    /// Constructor with parameters
     LineNumberArea(CodeEditor *editor) : QWidget(editor), codeEditor(editor){
     }
-    /// Переопределение метода рекомендуемого размера виджета
+    /// Overrides the recommended size method for the widget
     QSize sizeHint() const override{
         return QSize(codeEditor->lineNumberAreaWidth(), 0);
     }
 protected:
-    /// Переопределение метода перерисовки
+    /// Overrides the paint event method
     void paintEvent(QPaintEvent *event) override{
         codeEditor->lineNumberAreaPaintEvent(event);
     }
 private:
-    /// Редактор текста
+    /// Text editor
     CodeEditor *codeEditor;
 };

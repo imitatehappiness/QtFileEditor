@@ -51,9 +51,59 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="horizontalSpacing">
+    <number>4</number>
+   </property>
    <property name="verticalSpacing">
     <number>0</number>
    </property>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="pB_close">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 10pt;
+    background-color: #eee;
+    border: 1px solid #eee;
+    color: #EEEEEE;
+    border-radius: 4px;
+}
+
+QPushButton:hover{
+    color: #EEEEEE;
+}
+
+QPushButton:pressed {
+    border: 1px solid #eee;
+    border-radius: 5px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>resources/icons/close.png</normaloff>resources/icons/close.png</iconset>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="3">
     <widget class="QLineEdit" name="lE_search">
      <property name="minimumSize">
@@ -73,62 +123,6 @@
      </property>
      <property name="placeholderText">
       <string>Search...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QPushButton" name="pB_search">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string>Search</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="QPushButton" name="pB_close">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string>Close</string>
      </property>
     </widget>
    </item>

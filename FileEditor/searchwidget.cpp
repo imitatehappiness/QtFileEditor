@@ -11,16 +11,14 @@ SearchWidget::SearchWidget(QWidget *parent) :
     setWindowIcon(QIcon("resources/icons/search.png"));
     setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
-    connect(ui->pB_search, &QPushButton::clicked, this, [=](){
-        QString str = ui->lE_search->text();
-        if(!str.isEmpty()){
-            emit search(ui->lE_search->text());
-        }
-    });
 }
 
 SearchWidget::~SearchWidget(){
     delete ui;
+}
+
+void SearchWidget::setSearchFocus(){
+    ui->lE_search->setFocus();
 }
 
 void SearchWidget::on_pB_close_clicked(){
@@ -36,3 +34,8 @@ void SearchWidget::show(){
         ui->lE_search->clear();
     }
 }
+
+void SearchWidget::on_lE_search_textChanged(const QString &arg1){
+    emit search(arg1);
+}
+

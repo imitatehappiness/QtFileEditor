@@ -21,65 +21,56 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow{
     Q_OBJECT
 public:
-    /// Конструктор
+    /// Constructor
     MainWindow(QWidget *parent = nullptr);
-    /// Деструктор
+    /// Destructor
     ~MainWindow();
 private slots:
-    /// Слот создания файла
+    /// Slot for creating a file
     void fileCreate();
-    /// Слот открытия файла
+    /// Slot for opening a file
     void fileOpen();
-    /// Слот сохранения файла
+    /// Slot for saving a file
     void fileSave();
-    /// Слот сохранения файла с конкретным расширением
+    /// Slot for saving a file with a specific extension
     void fileSaveAs();
-    /// Слот закрытия файла
+    /// Slot for closing a file
     void fileClose();
-    /// Слот выбора директории для заполнения модели
-    void selectDirectory();
-    /// Слот нажатия контекстного меню элемента модели "Открыть Файл"
-    void treeMenuOpen(bool);
-    /// Слот нажатия контекстного меню элемента модели "Удалить Файл/Папку"
-    void treeMenuDelete(bool);
-    /// Слот нажатия контекстного меню элемента модели "Создать папку"
-    void treeMenuCreateFolder(bool);
-    /// Слот нажатия контекстного меню элемента модели "Создать файл"
-    void treeMenuCreateFile(bool);
-    /// Слот нажатия контекстного меню элемента модели "Отобразить файл"
-    void treeMenuDisplay(bool);
 protected:
-    /// Переопределенный метод закрытия приложения
+    /// Overridden method for closing the application
     void closeEvent(QCloseEvent* event) override;
-    /// Переопределение метода рекомендуемого размера виджета
+    /// Overridden method for the recommended size of the widget
     void resizeEvent(QResizeEvent* event) override;
-    /// Переопределение метода нажатия клавиш
+    /// Overridden method for key press events
     void keyPressEvent(QKeyEvent* event) override;
 private:
-    /// Открытие конкретного файла через путь к нему
+    /// Open a specific file using its path
     void fileOpen(QString& path);
-    /// Заполнение модели (запуск потока)
+    /// Populate the model (start the thread)
     void fillModel(QDir dir);
-    /// Отображение контекстного меню элемента модели
+    /// Display the context menu for the model element
     void treeMenu(const QPoint &pos);
-    /// Установка поиска по тексту в нужное положение
+    /// Set the text search widget to the correct position
     void setPositionSearchWidget();
+
+    void initMenuBar();
+    void setSearchWidgetGeometry();
 private:
     Ui::MainWindow *ui;
-    /// Имя текущего файла
+    /// Name of the current file
     QString mFilename;
-    /// Лейбл статус бара
+    /// Status bar label
     QLabel* mLabelFilename = nullptr;
-    /// Объект отвечающий за всплывающие уведомления
+    /// Object responsible for notifications
     Notification* mNotification = nullptr;
-    /// Модель директорий
+    /// Directory model
     QStandardItemModel* mModel = nullptr;
-    /// Путь до текущего файла
+    /// Path to the current file
     QString mPath;
-    /// Редактор файлов
+    /// File editor
     CodeEditor* mCodeEditor = nullptr;
-    /// Менеджер директорий
+    /// Directory manager
     DirManager* mDirManager = nullptr;
-    /// Виджет потска по файлу
+    /// Widget for file search
     SearchWidget* mSearch = nullptr;
 };

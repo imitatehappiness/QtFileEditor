@@ -10,23 +10,24 @@ CONFIG += c++17
 
 SOURCES += \
     codeeditor.cpp \
-    dirmanager.cpp \
     main.cpp \
     mainwindow.cpp \
     notification.cpp \
-    searchwidget.cpp
+    searchwidget.cpp \
+    windowframe.cpp
 
 HEADERS += \
     codeeditor.h \
-    dirmanager.h \
     mainwindow.h \
     notification.h \
-    searchwidget.h
+    searchwidget.h \
+    windowframe.h
 
 
 FORMS += \
     mainwindow.ui \
-    searchwidget.ui
+    searchwidget.ui \
+    windowframe.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

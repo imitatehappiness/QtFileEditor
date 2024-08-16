@@ -39,21 +39,21 @@ QPlainTextEdit {
 
 MainWindow{
     background-color: #eee;
-    color: rgb(238, 238, 238);
+    color: rgb(24, 24, 24);
 }
 
 QLabel{
-    color: rgb(24, 24, 24);
+    color: green;
     font: 10pt "Consolas";
+    padding-left: 6px;
 }
 
 QLineEdit{
     background-color: rgb(238, 238, 238);
     padding-left: 3px;
-    padding-rigth: 3px;
+    padding-right: 3px;
     font: 10pt "Consolas";
     selection-background-color: green;
-
 }
 
 QPushButton{
@@ -70,6 +70,7 @@ QPushButton:pressed{
 
 QScrollBar:vertical {
     background-color: rgb(24, 24, 24);
+    border-color: rgb(24, 24, 24);
     width: 10px;
     margin: 3px 3px 3px 3px;
     border-radius: 5px;
@@ -83,6 +84,7 @@ QScrollBar::handle:vertical {
 
 QScrollBar::add-line:vertical {
     background-color: rgb(24, 24, 24);
+    border-color: rgb(24, 24, 24);
     height: 0px;
     width: 10px;
     subcontrol-position: bottom;
@@ -91,23 +93,25 @@ QScrollBar::add-line:vertical {
 
 QScrollBar::sub-line:vertical {
     background-color: rgb(24, 24, 24);
+    border-color: rgb(24, 24, 24);
     height: 0px;
     width: 10px;
     subcontrol-position: top;
     subcontrol-origin: margin;
 }
 
-QScrollBar:horizontal {
+QPlainTextEdit QScrollBar:horizontal {
     background-color: rgb(24, 24, 24);
-    width: 10px;
+    border-color: rgb(24, 24, 24);
+    height: 10px;
     margin: 3px 3px 3px 3px;
     border-radius: 5px;
 }
 
-QScrollBar::handle:horizontal {
+QPlainTextEdit QScrollBar::handle:horizontal {
     background: #eee;
     border-radius: 10px;
-    min-height: 5px;
+    min-width: 5px;
 }
 
 QScrollBar::add-line:horizontal {
@@ -157,4 +161,70 @@ QMenuBar{
 QMenuBar::item:selected{
     background-color: green;
     color: #eee;
+}
+
+QGridLayout{
+    font-size: 8px;
+}
+
+#MainWindow{
+    background-color: rgb(33, 33, 33);
+    border-bottom: 2px solid rgb(33, 33, 33);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#body{
+    background-color: rgb(33, 33, 33);
+    border-bottom: 2px rgb(33, 33, 33);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#header{
+    background-color: rgb(20, 20, 20);
+    border: 1px solid rgb(20, 20, 20);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+QPushButton#close, QPushButton#collapse, QPushButton#maximum, QPushButton#minimum {
+    padding: 2px;
+    margin: 2px;
+    font: 10pt;
+    background-color: rgb(20, 20, 20);
+    border: 1px solid rgb(20, 20, 20);
+    color: #EEEEEE;
+    border-radius: 4px;
+}
+
+QPushButton#collapse:hover, QPushButton#maximum:hover, QPushButton#minimum:hover{
+    background-color: rgb(60, 60, 60);
+    color: #EEEEEE;
+}
+
+QPushButton#close:pressed, QPushButton#collapse:pressed, QPushButton#maximum:pressed, QPushButton#minimum:pressed {
+    border: 1px solid rgb(33, 33, 33);
+    border-radius: 5px;
+}
+
+QMenuBar{
+    background-color: rgb(24, 24, 24);
+    color: #eee;
+    padding-top: 3px;
+    border-bottom: 2px solid rgb(33, 33, 33);
+}
+
+QPushButton#close:hover{
+    background-color: rgb(255, 50, 50);
+}
+
+QPushButton#close{
+    margin-right: 5px;
+}
+
+QStatusBar{
+    background-color: rgb(24, 24, 24);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }

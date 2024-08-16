@@ -1,10 +1,14 @@
 #include "mainwindow.h"
+#include "windowframe.h"
 
 #include <QApplication>
 #include <QProxyStyle>
 #include <QStyleFactory>
 #include <QFile>
 #include <QMessageBox>
+#include <QMetaType>
+#include <QWidget>
+#include <Qt>
 
 int main(int argc, char *argv[]){
 
@@ -19,14 +23,16 @@ int main(int argc, char *argv[]){
         QMessageBox mBox;
         mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
         mBox.setIcon(QMessageBox::Warning);
-        mBox.setText("Error appstyles.qss reading! \nThe program may not work correctly!");
+        mBox.setText("Error appstyles.qss reading! \nThe programm may not work correctly!");
         mBox.setButtonText(QMessageBox::Ok, "Ok");
         mBox.exec();
     }
 
     a.setStyleSheet(styleQSS);
 
-    MainWindow w;
+    qRegisterMetaType<Qt::Orientation>("Qt::Orientation");
+
+    WindowFrame w(nullptr, new MainWindow());
     w.show();
     return a.exec();
 }
