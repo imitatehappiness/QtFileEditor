@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
+#include <QGraphicsOpacityEffect>
 
 const QString TITLE = "";
 
@@ -39,7 +40,7 @@ const QString headerMaximizeStyle = QStringLiteral(
     "}"
 );
 
-const QString headerIcon        = ":/resources/icons/hh-logo.png";
+const QString headerIcon        = "";
 const QString closeIcon         = ":/resources/icons/close_light.png";
 const QString collapseHideIcon  = ":/resources/icons/collapse_hide_light.png";
 const QString collapseShowIcon  = ":/resources/icons/collapse_show_light.png";
@@ -56,12 +57,19 @@ WindowFrame::WindowFrame(QWidget *parent, QWidget *child)
     ui->setupUi(this);
     this->mBorderSize = 5;
 
+    QGraphicsOpacityEffect* opacityEffect = new QGraphicsOpacityEffect(this);
+    opacityEffect->setOpacity(0.97);
+    ui->body->setGraphicsEffect(opacityEffect);
+
+    setWindowOpacity(1.0);
+
     initIcons();
 
     ui->title->setText(TITLE);
 
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
     setAttribute(Qt::WA_TranslucentBackground);
+
     if(child != nullptr) {
         ui->body->layout()->addWidget(child);
         mMainBody = child;
@@ -104,7 +112,7 @@ void WindowFrame::showHeaderContextMenu(const QPoint &pos){
 
 /// @brief Handler for the "Close" button click signal.
 void WindowFrame::on_close_clicked(){
-    close();
+    mChild->close();
 }
 
 /// @brief Handler for the "Maximize/Restore" button click signal.
@@ -259,6 +267,10 @@ void WindowFrame::enableMaximum(bool enable) {
 /// @param enable If true, the button will be shown; if false, it will be hidden.
 void WindowFrame::enableClose(bool enable) {
     !enable ? ui->close->hide() : ui->close->show();
+}
+
+void WindowFrame::closeEvent(QCloseEvent *event){
+    mChild->close();
 }
 
 /// @brief Override event filtering function for the WindowFrame class.

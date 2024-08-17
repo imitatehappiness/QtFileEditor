@@ -14,7 +14,6 @@
 #include "codeeditor.h"
 #include "notification.h"
 #include "searchwidget.h"
-#include "ui_searchwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -32,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->frame_editor->setLayout(gridEditor);
 
     this->mLabelFilename = new QLabel(this);
+    this->mLabelFilename->setStyleSheet("color: #eee; font-style: italic;");
+
     ui->statusbar->addWidget(mLabelFilename);
 
     this->mNotification = new Notification(this);
@@ -59,19 +60,41 @@ void MainWindow::resizeEvent(QResizeEvent* event){
 void MainWindow::keyPressEvent(QKeyEvent* event){
     int key = event->key();
     if(event->modifiers() == Qt::ControlModifier && key == Qt::Key_F) {
+        mSearch->setSearchText("");
         if (mCodeEditor) {
             this->setSearchWidgetGeometry();
             this->mSearch->setSearchFocus();
         }
         this->mSearch->show();
+
+        QTextCursor cursor = mCodeEditor->textCursor();
+
+        // Check if there is a selection
+        if (cursor.hasSelection()) {
+            // Retrieve the selected text
+            QString selectedText = cursor.selectedText();
+            if (selectedText.size() > 0){
+                mSearch->setSearchText(selectedText);
+            }
+        }
+    }
+
+    if(event->modifiers() == Qt::ControlModifier && key == Qt::Key_S) {
+        fileSave();
+    }
+    if((event->modifiers() & Qt::ControlModifier) && (event->modifiers() & Qt::ShiftModifier) && key == Qt::Key_S) {
+        fileSaveAs();
     }
 }
+
 void MainWindow::fileCreate(){
     mCodeEditor->setReadOnly(false);
     mFilename = QInputDialog::getText(this, tr("Create file"), tr("Enter the file name:"), QLineEdit::Normal);
     if(mFilename.size() > 0){
         this->mCodeEditor->clear();
         this->mLabelFilename->setText(this->mFilename);
+        this->mCodeEditor->setFileExtension(this->mFilename);
+        this->mCodeEditor->updateSyntaxHighlighter();
     }
 }
 
@@ -88,8 +111,11 @@ void MainWindow::fileOpen(){
         QTextStream stream(&file);
         stream.setCodec("UTF-8");
         QString buf = stream.readAll();
+        this->mCodeEditor->setSourceText(buf);
         this->mCodeEditor->appendPlainText(buf);
         this->mLabelFilename->setText(this->mFilename);
+        this->mCodeEditor->setFileExtension(this->mFilename);
+        this->mCodeEditor->updateSyntaxHighlighter();
     }else{
         QMessageBox mBox;
         mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
@@ -114,6 +140,9 @@ void MainWindow::fileOpen(QString &path){
         QString buf = stream.readAll();
         this->mCodeEditor->setPlainText(buf);
         this->mLabelFilename->setText(this->mFilename);
+        this->mCodeEditor->setFileExtension(this->mFilename);
+        this->mCodeEditor->updateSyntaxHighlighter();
+        this->mCodeEditor->setNeedSave(false);
     }else{
         QMessageBox mBox;
         mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
@@ -165,8 +194,10 @@ void MainWindow::fileSave(){
             stream.setCodec("UTF-8");
             stream << buf;
             file.close();
-            this->mNotification->setNotificationText("The file has been saved");
+            this->mNotification->setNotificationText("Saved");
             this->mNotification->show();
+
+            mCodeEditor->setNeedSave(false);
         }
     }
     else{
@@ -189,6 +220,8 @@ void MainWindow::fileSaveAs(){
         file.close();
         this->mNotification->setNotificationText("Saved");
         this->mNotification->show();
+
+        mCodeEditor->setNeedSave(false);
     }
 }
 
@@ -212,10 +245,20 @@ void MainWindow::fileClose(){
         this->mFilename = "";
         this->mCodeEditor->clear();
         this->mLabelFilename->setText("");
+        this->mCodeEditor->setFileExtension("");
+        this->mCodeEditor->updateSyntaxHighlighter();
         return;
     }
 }
 
 void MainWindow::closeEvent(QCloseEvent* /*event*/){
+
+    if (this->mCodeEditor->needSave()){
+        int ret = QMessageBox::question(this, "Close file", "Do you want to save the file?" , QMessageBox::Save | QMessageBox::No, QMessageBox::Save);
+        if(ret == QMessageBox::Save){
+            this->fileSave();
+        }
+    }
+
     QApplication::closeAllWindows();
 }

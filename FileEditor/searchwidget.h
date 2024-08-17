@@ -2,6 +2,8 @@
 
 #include <QWidget>
 
+#include <types.h>
+
 namespace Ui {
 class SearchWidget;
 }
@@ -18,9 +20,10 @@ public:
     /// Destructor
     ~SearchWidget();
     void setSearchFocus();
+    void setSearchText(QString str);
 signals:
     /// Signal to start the search
-    void search(const QString& str);
+    void search(const QString& str, forwardTypes forward);
 public slots:
     /// Overridden method to display the widget
     void show();
@@ -28,6 +31,10 @@ private slots:
     /// Slot for the "Close" button click
     void on_pB_close_clicked();
     void on_lE_search_textChanged(const QString &arg1);
+    void on_pB_next_clicked();
+
+    void on_pB_prev_clicked();
+
 private:
     Ui::SearchWidget *ui;
 };

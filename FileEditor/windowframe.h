@@ -27,6 +27,7 @@ public:
     /// Show or hide the window close button.
     void enableClose(bool enable);
 protected:
+    void closeEvent(QCloseEvent *event) override;
     /// Handler for the mouse press event.
     void mousePressEvent(QMouseEvent *event) override;
     /// Handler for the mouse move event within the window.

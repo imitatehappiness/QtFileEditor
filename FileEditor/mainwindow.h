@@ -25,6 +25,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     /// Destructor
     ~MainWindow();
+
 private slots:
     /// Slot for creating a file
     void fileCreate();

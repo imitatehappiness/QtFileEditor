@@ -23,5 +23,8 @@
         <file>icons/maximize_light.png</file>
         <file>icons/minimize_light.png</file>
         <file>icons/close.png</file>
+        <file>icons/arrow-left.png</file>
+        <file>icons/arrow-right.png</file>
+        <file>icons/icon.png</file>
     </qresource>
 </RCC>

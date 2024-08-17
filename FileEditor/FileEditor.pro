@@ -9,7 +9,9 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    basesyntaxhighlighter.cpp \
     codeeditor.cpp \
+    cppsyntaxhighlighter.cpp \
     main.cpp \
     mainwindow.cpp \
     notification.cpp \
@@ -17,10 +19,13 @@ SOURCES += \
     windowframe.cpp
 
 HEADERS += \
+    basesyntaxhighlighter.h \
     codeeditor.h \
+    cppsyntaxhighlighter.h \
     mainwindow.h \
     notification.h \
     searchwidget.h \
+    types.h \
     windowframe.h
 
 

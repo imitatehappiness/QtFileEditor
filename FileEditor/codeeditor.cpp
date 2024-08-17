@@ -4,8 +4,14 @@
 #include <QDebug>
 #include <QTextBlock>
 #include <QKeyEvent>
+#include <QFileInfo>
 
-CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent){
+#include "cppsyntaxhighlighter.h"
+#include "types.h"
+
+CodeEditor::CodeEditor(QWidget *parent, const QString &text) : QPlainTextEdit(parent) {
+    this->setSourceText(text);
+
     this->mLineNumberArea = new LineNumberArea(this);
 
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
@@ -19,6 +25,11 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent){
     this->updateLineNumberAreaWidth(0);
     this->highlightCurrentLine();
     setFocus();
+
+    mSearchForward = forwardTypes::all;
+    mNeedSave = false;
+
+    connect(this, &QPlainTextEdit::textChanged, this, &CodeEditor::onTextChanged);
 }
 
 int CodeEditor::lineNumberAreaWidth(){
@@ -36,20 +47,121 @@ int CodeEditor::lineNumberAreaWidth(){
     return space + additionalPadding;
 }
 
-void CodeEditor::search(const QString& str){
-    const QColor highlightColor("green");
+void CodeEditor::setFileExtension(QString filename){
+    QFileInfo fileInfo(filename);
+    mFileExt = fileInfo.suffix();
+}
+
+void CodeEditor::search(const QString& str, forwardTypes forward) {
+    const QColor highlightColor("#376489");
+    const QColor textColor("#EEEEEE");
+
+    if (str.isEmpty()) {
+        setExtraSelections({});
+        return;
+    }
 
     QList<QTextEdit::ExtraSelection> sel;
-    moveCursor(QTextCursor::Start);
-    while(find(str)){
-        QTextEdit::ExtraSelection extra;
-        extra.format.setBackground(highlightColor);
-        extra.cursor = textCursor();
-        sel.append(extra);
-    }
-    if(!sel.isEmpty()){
+    QTextCursor cursor = textCursor(); // Get the current cursor
+    QTextDocument::FindFlags flags = QTextDocument::FindCaseSensitively;
+
+    if (forward == forwardTypes::all) {
+        QTextCursor startCursor = QTextCursor(document()->begin()); // Start from the beginning of the document
+        QTextCursor result = document()->find(str, startCursor, flags);
+
+        while (!result.isNull()) {
+            QTextEdit::ExtraSelection extra;
+            extra.format.setBackground(highlightColor);
+            extra.format.setForeground(textColor);
+            extra.cursor = result;
+            sel.append(extra);
+
+            startCursor = result; // Update the start cursor
+            result = document()->find(str, startCursor, flags);
+        }
+
         setExtraSelections(sel);
+    } else if (forward == forwardTypes::prev) {
+        QTextCursor startCursor = textCursor(); // Start from the current cursor
+        QTextCursor result = document()->find(str, startCursor, QTextDocument::FindBackward | flags);
+
+        if (result.isNull()) {
+            startCursor.movePosition(QTextCursor::End);
+            startCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+            result = document()->find(str, startCursor, QTextDocument::FindBackward | flags);
+        }
+
+        if (!result.isNull()) {
+            if (result.selectionStart() >= startCursor.selectionStart()){
+                QTextEdit::ExtraSelection extra;
+                extra.format.setBackground(highlightColor);
+                extra.cursor = result;
+                sel.append(extra);
+                setExtraSelections(sel);
+                setTextCursor(result); // Move the cursor to the found occurrence
+            } else {
+                startCursor.movePosition(QTextCursor::End);
+                startCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+                if (!result.isNull()) {
+                    QTextEdit::ExtraSelection extra;
+                    extra.format.setBackground(highlightColor);
+                    extra.cursor = result;
+                    sel.append(extra);
+                    setExtraSelections(sel);
+                    setTextCursor(result); // Move the cursor to the found occurrence
+                } else {
+                    setExtraSelections({});
+                }
+            }
+        } else {
+            setExtraSelections({});
+        }
+    } else if (forward == forwardTypes::next) {
+        QTextCursor startCursor = textCursor(); // Start from the current cursor
+        QTextCursor result = document()->find(str, startCursor, flags);
+
+        if (result.isNull()) {
+            // If nothing is found, search from the beginning of the document
+            startCursor = QTextCursor(document()->begin());
+            result = document()->find(str, startCursor, flags);
+        }
+
+        if (!result.isNull()) {
+            // If found and within the valid range
+            if (result.selectionStart() >= startCursor.selectionStart()) {
+                QTextEdit::ExtraSelection extra;
+                extra.format.setBackground(highlightColor);
+                extra.cursor = result;
+                sel.append(extra);
+                setExtraSelections(sel);
+                setTextCursor(result); // Move the cursor to the found occurrence
+            } else {
+                // If result does not exceed the start cursor, initialize search from the beginning
+                startCursor = QTextCursor(document()->begin());
+                result = document()->find(str, startCursor, flags);
+                if (!result.isNull()) {
+                    QTextEdit::ExtraSelection extra;
+                    extra.format.setBackground(highlightColor);
+                    extra.cursor = result;
+                    sel.append(extra);
+                    setExtraSelections(sel);
+                    setTextCursor(result); // Move the cursor to the found occurrence
+                } else {
+                    setExtraSelections({});
+                }
+            }
+        } else {
+            setExtraSelections({});
+        }
     }
+}
+
+void CodeEditor::onTextChanged() {
+    QString currentText = this->toPlainText();
+    currentText.replace("\r\n", "\n");
+
+    this->mSourceText.replace("\r\n", "\n");
+    this->mNeedSave = this->mSourceText != currentText;
 }
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */){
@@ -68,10 +180,29 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy){
     }
 }
 
+void CodeEditor::setSourceText(const QString &newSourceText){
+    this->mSourceText = newSourceText;
+}
+
+void CodeEditor::setNeedSave(const bool &newNeedSave){
+    this->mNeedSave = newNeedSave;
+}
+
+bool CodeEditor::needSave() const{
+    return mNeedSave;
+}
+
 void CodeEditor::resizeEvent(QResizeEvent* event){
     QPlainTextEdit::resizeEvent(event);
     QRect cr = contentsRect();
     this->mLineNumberArea->setGeometry(QRect(cr.left(), cr.top(), this->lineNumberAreaWidth(), cr.height()));
+}
+
+void CodeEditor::updateSyntaxHighlighter(){
+    if (mFileExt == "cpp" || mFileExt == "h"){
+        new CppSyntaxHighlighter(this->document());
+    }
+    new CppSyntaxHighlighter();
 }
 
 void CodeEditor::highlightCurrentLine(){

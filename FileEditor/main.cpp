@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
         QMessageBox mBox;
         mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
         mBox.setIcon(QMessageBox::Warning);
-        mBox.setText("Error appstyles.qss reading! \nThe programm may not work correctly!");
+        mBox.setText("Error appstyles.qss reading! \nThe program may not work correctly!");
         mBox.setButtonText(QMessageBox::Ok, "Ok");
         mBox.exec();
     }

@@ -6,6 +6,8 @@
 #include <QSize>
 #include <QWidget>
 
+#include <types.h>
+
 class LineNumberArea;
 
 /*!
@@ -16,11 +18,16 @@ class CodeEditor : public QPlainTextEdit{
     Q_OBJECT
 public:
     /// Constructor
-    CodeEditor(QWidget *parent = nullptr);
+    CodeEditor(QWidget *parent = nullptr, const QString& text = "");
     /// Redraws the line number area widget
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     /// Returns the width of the line number area widget
     int lineNumberAreaWidth();
+    void setFileExtension (QString filename);
+    void updateSyntaxHighlighter();
+    bool needSave() const;
+    void setNeedSave(const bool &newNeedSave);
+    void setSourceText(const QString &newSourceText);
 protected:
     /// Overrides the recommended size method for the widget
     void resizeEvent(QResizeEvent* event);
@@ -29,7 +36,9 @@ signals:
     void showWidgetFileSearch();
 public slots:
     /// Slot for file search
-    void search(const QString& str);
+    void search(const QString& str, forwardTypes forward);
+    /// Slot to handle text changes
+    void onTextChanged();
 private slots:
     /// Slot to update the width of the line number area widget
     void updateLineNumberAreaWidth(int newBlockCount);
@@ -40,6 +49,10 @@ private slots:
 private:
     /// Line number area widget
     QWidget *mLineNumberArea = nullptr;
+    QString mFileExt;
+    forwardTypes mSearchForward;
+    bool mNeedSave;
+    QString mSourceText;
 };
 
 /*!

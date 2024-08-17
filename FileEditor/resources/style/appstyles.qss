@@ -19,6 +19,10 @@ QHeaderView::section {
     border-right: none;
 }
 
+QStatusBar{
+    border-top: 2px solid rgb(33, 33, 33);
+}
+
 QTextEdit {
     font: 12pt "Consolas";
     background-color: rgb(24, 24, 24);
@@ -33,7 +37,7 @@ QPlainTextEdit {
     border: 1px solid rgb(24, 24, 24);
     border-radius: 5px;
     color: #eee;
-    selection-background-color: green;
+    selection-background-color: #376489;
     selection-color: #eee;
 }
 
@@ -43,7 +47,7 @@ MainWindow{
 }
 
 QLabel{
-    color: green;
+    color: rgb(24, 24, 24);
     font: 10pt "Consolas";
     padding-left: 6px;
 }
@@ -227,4 +231,82 @@ QStatusBar{
     background-color: rgb(24, 24, 24);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+}
+
+QMessageBox {
+    background-color: rgb(30, 30, 30);
+    color: #eee;
+    border: 1px solid rgb(30, 30, 30);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+QMessageBox QLabel {
+    color: #eee;
+}
+
+QMessageBox QPushButton {
+    background-color: #eee;
+    color: rgb(30, 30, 30);
+    padding: 5px 10px;
+    border: 1px solid rgb(30, 30, 30);
+    border-radius: 5px;
+}
+
+QMessageBox QPushButton:pressed {
+}
+
+QMessageBox QPushButton:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+QMessageBox QPushButton:default {
+    background-color: #eee;
+    color: rgb(30, 30, 30);
+}
+
+QMessageBox QPushButton:default:pressed {
+}
+
+QMessageBox QPushButton:default:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+QInputDialog {
+    background-color: rgb(30, 30, 30);
+    color: #eee;
+    border: 1px solid rgb(30, 30, 30);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+QInputDialog QLabel {
+    color: #eee;
+}
+
+QInputDialog QPushButton {
+    background-color: #eee;
+    color: rgb(30, 30, 30);
+    padding: 5px 10px;
+    border: 1px solid rgb(30, 30, 30);
+    border-radius: 5px;
+}
+
+QInputDialog QPushButton:pressed {
+}
+
+QInputDialog QPushButton:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+QInputDialog QPushButton:default {
+    background-color: #eee;
+    color: rgb(30, 30, 30);
+}
+
+QInputDialog QPushButton:default:pressed {
+}
+
+QInputDialog QPushButton:default:hover {
+    background-color: rgb(200, 200, 200);
 }
