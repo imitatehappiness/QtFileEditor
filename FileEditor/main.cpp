@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
 
     QApplication a(argc, argv);
     a.setStyle(new QProxyStyle(QStyleFactory::create("Fusion")));
-    QString stylePath = "resources/style/appstyles.qss";
+    QString stylePath = ":/resources/style/appstyles.qss";
     QFile styleFile(stylePath);
     styleFile.open(QFile::ReadOnly);
     QString styleQSS = styleFile.readAll();
