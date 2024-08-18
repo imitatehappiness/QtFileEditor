@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow){
 
     ui->setupUi(this);
+    setWindowOpacity(0.97);
     setWindowIcon(QIcon("resources/icons/appIcon.png"));
 
     this->statusBar()->setSizeGripEnabled(false);
@@ -60,7 +61,6 @@ void MainWindow::resizeEvent(QResizeEvent* event){
 void MainWindow::keyPressEvent(QKeyEvent* event){
     int key = event->key();
     if(event->modifiers() == Qt::ControlModifier && key == Qt::Key_F) {
-        mSearch->setSearchText("");
         if (mCodeEditor) {
             this->setSearchWidgetGeometry();
             this->mSearch->setSearchFocus();

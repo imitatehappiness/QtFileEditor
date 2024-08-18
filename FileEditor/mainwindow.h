@@ -4,11 +4,11 @@
 #include <QLabel>
 #include <QStandardItemModel>
 #include <QDir>
+#include <QTabWidget>
 
 QT_BEGIN_NAMESPACE
 class Notification;
 class CodeEditor;
-class DirManager;
 class SearchWidget;
 namespace Ui {
     class MainWindow;
@@ -37,6 +37,7 @@ private slots:
     void fileSaveAs();
     /// Slot for closing a file
     void fileClose();
+
 protected:
     /// Overridden method for closing the application
     void closeEvent(QCloseEvent* event) override;
@@ -56,6 +57,8 @@ private:
 
     void initMenuBar();
     void setSearchWidgetGeometry();
+    void addNewTab(const QString &filename = "");
+    void updateCurrentTabFilename();
 private:
     Ui::MainWindow *ui;
     /// Name of the current file
@@ -64,14 +67,10 @@ private:
     QLabel* mLabelFilename = nullptr;
     /// Object responsible for notifications
     Notification* mNotification = nullptr;
-    /// Directory model
-    QStandardItemModel* mModel = nullptr;
     /// Path to the current file
     QString mPath;
     /// File editor
     CodeEditor* mCodeEditor = nullptr;
-    /// Directory manager
-    DirManager* mDirManager = nullptr;
     /// Widget for file search
     SearchWidget* mSearch = nullptr;
 };

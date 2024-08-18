@@ -2,11 +2,11 @@
 
 #include "basesyntaxhighlighter.h"
 
-class CppSyntaxHighlighter : public BaseSyntaxHighlighter {
+class XsltSyntaxHighlighter : public BaseSyntaxHighlighter {
     Q_OBJECT
 
 public:
-    CppSyntaxHighlighter(QTextDocument *parent = nullptr);
+    XsltSyntaxHighlighter(QTextDocument *parent = nullptr);
 
 protected:
     void setupHighlightingRules() override;

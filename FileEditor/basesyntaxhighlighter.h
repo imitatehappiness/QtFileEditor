@@ -1,5 +1,4 @@
-#ifndef BASESYNTAXHIGHLIGHTER_H
-#define BASESYNTAXHIGHLIGHTER_H
+#pragma once
 
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
@@ -24,4 +23,3 @@ protected:
     void highlightBlock(const QString &text) override;
 };
 
-#endif // BASESYNTAXHIGHLIGHTER_H

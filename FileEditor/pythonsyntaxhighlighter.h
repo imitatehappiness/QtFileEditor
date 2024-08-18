@@ -1,12 +1,11 @@
 #pragma once
-
 #include "basesyntaxhighlighter.h"
 
-class CppSyntaxHighlighter : public BaseSyntaxHighlighter {
+class PythonSyntaxHighlighter : public BaseSyntaxHighlighter {
     Q_OBJECT
 
 public:
-    CppSyntaxHighlighter(QTextDocument *parent = nullptr);
+    PythonSyntaxHighlighter(QTextDocument *parent = nullptr);
 
 protected:
     void setupHighlightingRules() override;

@@ -12,21 +12,33 @@ SOURCES += \
     basesyntaxhighlighter.cpp \
     codeeditor.cpp \
     cppsyntaxhighlighter.cpp \
+    csssyntaxhighlighter.cpp \
+    htmlsyntaxhighlighter.cpp \
+    jsonsyntaxhighlighter.cpp \
     main.cpp \
     mainwindow.cpp \
     notification.cpp \
+    pythonsyntaxhighlighter.cpp \
     searchwidget.cpp \
-    windowframe.cpp
+    windowframe.cpp \
+    xmlsyntaxhighlighter.cpp \
+    xsltsyntaxhighlighter.cpp
 
 HEADERS += \
     basesyntaxhighlighter.h \
     codeeditor.h \
     cppsyntaxhighlighter.h \
+    csssyntaxhighlighter.h \
+    htmlsyntaxhighlighter.h \
+    jsonsyntaxhighlighter.h \
     mainwindow.h \
     notification.h \
+    pythonsyntaxhighlighter.h \
     searchwidget.h \
     types.h \
-    windowframe.h
+    windowframe.h \
+    xmlsyntaxhighlighter.h \
+    xsltsyntaxhighlighter.h
 
 
 FORMS += \

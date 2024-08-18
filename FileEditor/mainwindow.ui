@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>400</height>
+    <width>922</width>
+    <height>489</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -90,7 +90,7 @@ border-radius: 5px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>922</width>
      <height>21</height>
     </rect>
    </property>

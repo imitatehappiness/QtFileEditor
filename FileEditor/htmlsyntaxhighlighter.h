@@ -1,12 +1,11 @@
 #pragma once
-
 #include "basesyntaxhighlighter.h"
 
-class CppSyntaxHighlighter : public BaseSyntaxHighlighter {
+class HtmlSyntaxHighlighter : public BaseSyntaxHighlighter {
     Q_OBJECT
 
 public:
-    CppSyntaxHighlighter(QTextDocument *parent = nullptr);
+    HtmlSyntaxHighlighter(QTextDocument *parent = nullptr);
 
 protected:
     void setupHighlightingRules() override;

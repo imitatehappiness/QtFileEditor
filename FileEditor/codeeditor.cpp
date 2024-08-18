@@ -7,6 +7,12 @@
 #include <QFileInfo>
 
 #include "cppsyntaxhighlighter.h"
+#include "xmlsyntaxhighlighter.h"
+#include "jsonsyntaxhighlighter.h"
+#include "xsltsyntaxhighlighter.h"
+#include "htmlsyntaxhighlighter.h"
+#include "csssyntaxhighlighter.h"
+#include "pythonsyntaxhighlighter.h"
 #include "types.h"
 
 CodeEditor::CodeEditor(QWidget *parent, const QString &text) : QPlainTextEdit(parent) {
@@ -201,6 +207,24 @@ void CodeEditor::resizeEvent(QResizeEvent* event){
 void CodeEditor::updateSyntaxHighlighter(){
     if (mFileExt == "cpp" || mFileExt == "h"){
         new CppSyntaxHighlighter(this->document());
+    }
+    if (mFileExt == "xml"){
+        new XmlSyntaxHighlighter(this->document());
+    }
+    if (mFileExt == "xslt"){
+        new XmlSyntaxHighlighter(this->document());
+    }
+    if (mFileExt == "json"){
+        new JsonSyntaxHighlighter(this->document());
+    }
+    if (mFileExt == "html"){
+        new HtmlSyntaxHighlighter(this->document());
+    }
+    if (mFileExt == "css"){
+        new CssSyntaxHighlighter(this->document());
+    }
+    if (mFileExt == "py"){
+        new PythonSyntaxHighlighter(this->document());
     }
     new CppSyntaxHighlighter();
 }
