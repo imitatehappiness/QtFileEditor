@@ -99,8 +99,8 @@ QPushButton:pressed {
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>resources/icons/close.png</normaloff>resources/icons/close.png</iconset>
+      <iconset resource="resources/resources.qrc">
+       <normaloff>:/resources/icons/close.png</normaloff>:/resources/icons/close.png</iconset>
      </property>
     </widget>
    </item>

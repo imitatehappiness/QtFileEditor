@@ -161,6 +161,13 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
     if ((event->modifiers() & Qt::ControlModifier) && (event->modifiers() & Qt::ShiftModifier) && key == Qt::Key_S) {
         fileSaveAs();
     }
+    if ((event->modifiers() & Qt::ControlModifier) && key == Qt::Key_R) {
+        addNewTab();
+    }
+    if ((event->modifiers() & Qt::ControlModifier) && key == Qt::Key_E) {
+        int index = mTabWidget->currentIndex();
+        closeTab(index);
+    }
 }
 
 // Установка геометрии виджета поиска
