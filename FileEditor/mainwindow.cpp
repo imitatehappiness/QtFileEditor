@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
     setWindowOpacity(0.97);
-    setWindowIcon(QIcon("resources/icons/appIcon.png"));
+    setWindowIcon(QIcon(":/resources/icons/icon.png"));
 
     this->statusBar()->setSizeGripEnabled(false);
     this->initMenuBar();
@@ -104,6 +104,7 @@ void MainWindow::closeTab(int index) {
         if (index < mCodeEditors.size()) {
             mCodeEditors.remove(index);
             mFilenames.remove(index);
+            mTabWidget->setFocus();
         }
 
         if (mCodeEditors.size() > 0){
@@ -234,7 +235,7 @@ void MainWindow::fileOpen() {
             mLabelFilename->setText(filename);
         } else {
             QMessageBox mBox;
-            mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
+            mBox.setWindowIcon(QIcon(":/resources/icons/icon.png"));
             mBox.setIcon(QMessageBox::Warning);
             mBox.setText("File opening error!");
             mBox.setButtonText(QMessageBox::Ok, "Ok");
@@ -269,7 +270,7 @@ void MainWindow::fileOpen(QString &path) {
             mLabelFilename->setText(filename);
         } else {
             QMessageBox mBox;
-            mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
+            mBox.setWindowIcon(QIcon(":/resources/icons/icon.png"));
             mBox.setIcon(QMessageBox::Warning);
             mBox.setText("File opening error!");
             mBox.setButtonText(QMessageBox::Ok, "Ok");

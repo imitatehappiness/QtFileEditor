@@ -90,7 +90,6 @@ void WindowFrame::initIcons(){
     ui->icon->setPixmap(pixmap);
     ui->icon->setScaledContents(true);
     ui->icon->setAlignment(Qt::AlignCenter);
-    ui->icon->resize(24, 24);
 
     ui->collapse->setIcon(QIcon(collapseHideIcon));
     ui->close->setIcon(QIcon(closeIcon));
