@@ -35,6 +35,9 @@ CodeEditor::CodeEditor(QWidget *parent, const QString &text) : QPlainTextEdit(pa
     mSearchForward = forwardTypes::all;
     mNeedSave = false;
 
+    int tabStopWidth = fontMetrics().horizontalAdvance(' ') * 12;
+    setTabStopDistance(tabStopWidth);
+
     connect(this, &QPlainTextEdit::textChanged, this, &CodeEditor::onTextChanged);
 }
 

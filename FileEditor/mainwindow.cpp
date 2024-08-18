@@ -17,7 +17,6 @@
 #include "notification.h"
 #include "searchwidget.h"
 
-// Основной конструктор и деструктор
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow) {
@@ -30,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->initMenuBar();
 
     mTabWidget = new QTabWidget();
-    mTabWidget->setContentsMargins(0, 0, 0, 0); // Убирает отступы для QTabWidget
+    mTabWidget->setContentsMargins(0, 0, 0, 0);
 
     mTabWidget->setTabsClosable(true);
     mTabWidget->setMovable(true);
@@ -41,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton *addTabButton = new QPushButton(this);
     addTabButton->setIcon(QIcon(":resources/icons/plus.png"));
     addTabButton->setStyleSheet("background-color: rgb(24,24,24); border: 1px solid rgb(24,24,24); margin-left: 10px; padding-right: 10px; padding-bottom: 1px;");
+
     mTabWidget->setCornerWidget(addTabButton, Qt::TopRightCorner);
     connect(addTabButton, &QPushButton::clicked, this, &MainWindow::addNewTab);
 
@@ -61,7 +61,6 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::addNewTab() {
-    // Создание новых объектов для вкладки
     CodeEditor *newEditor = new CodeEditor();
     this->mCodeEditors.append(newEditor);
 
@@ -87,12 +86,9 @@ void MainWindow::addNewTab() {
 
     mLabelFilename->setText(filename);
 
-    mTabWidget -> tabBar() -> setExpanding(true);
-
+    mTabWidget->tabBar()->setExpanding(true);
 }
 
-
-// Закрытие вкладки
 void MainWindow::closeTab(int index) {
     if (index >= 0 && index < mTabWidget->count()) {
         QWidget *widget = mTabWidget->widget(index);
@@ -111,7 +107,6 @@ void MainWindow::closeTab(int index) {
             index = mTabWidget->currentIndex();
             mLabelFilename->setText(mFilenames[index]);
         }
-
     }
 
     if (index==0 && mCodeEditors.size() == 0){
@@ -119,7 +114,6 @@ void MainWindow::closeTab(int index) {
     }
 }
 
-// Обновление текущей вкладки
 void MainWindow::updateCurrentTab(int index) {
     qDebug() << "index: " << index;
     qDebug() << "mFilenames: " << mFilenames.size();
@@ -131,28 +125,31 @@ void MainWindow::updateCurrentTab(int index) {
 
 }
 
-// Обработка события изменения размера окна
 void MainWindow::resizeEvent(QResizeEvent* event) {
     QMainWindow::resizeEvent(event);
     setSearchWidgetGeometry();
 }
 
-// Обработка нажатий клавиш
 void MainWindow::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
     int index = mTabWidget->currentIndex();
 
     if (mCodeEditors.size() > 0 && event->modifiers() == Qt::ControlModifier && key == Qt::Key_F) {
-        setSearchWidgetGeometry();
-        mSearch->setSearchFocus();
-        mSearch->show();
 
-        QTextCursor cursor = mCodeEditors[index]->textCursor();
-        if (cursor.hasSelection()) {
-            QString selectedText = cursor.selectedText();
-            if (selectedText.size() > 0) {
-                mSearch->setSearchText(selectedText);
+        if (mSearch->isHidden()){
+            setSearchWidgetGeometry();
+            mSearch->setSearchFocus();
+            mSearch->show();
+
+            QTextCursor cursor = mCodeEditors[index]->textCursor();
+            if (cursor.hasSelection()) {
+                QString selectedText = cursor.selectedText();
+                if (selectedText.size() > 0) {
+                    mSearch->setSearchText(selectedText);
+                }
             }
+        }else{
+            mSearch->hide();
         }
     }
 
@@ -171,7 +168,6 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
     }
 }
 
-// Установка геометрии виджета поиска
 void MainWindow::setSearchWidgetGeometry() {
 
     if (mCodeEditors.size() > 0){
@@ -185,7 +181,6 @@ void MainWindow::setSearchWidgetGeometry() {
     }
 }
 
-// Создание нового файла
 void MainWindow::fileCreate() {
     int index = mTabWidget->currentIndex();
     if (index >= 0 && index < mCodeEditors.size()) {
@@ -205,7 +200,6 @@ void MainWindow::fileCreate() {
     }
 }
 
-// Открытие файла
 void MainWindow::fileOpen() {
     int index = mTabWidget->currentIndex();
     qDebug() << "Current index changed to:" << index;
@@ -245,7 +239,6 @@ void MainWindow::fileOpen() {
     }
 }
 
-// Открытие файла с заданным путем
 void MainWindow::fileOpen(QString &path) {
     int index = mTabWidget->currentIndex();
     if (index >= 0 && index < mCodeEditors.size()) {
@@ -301,7 +294,6 @@ void MainWindow::initMenuBar(){
     connect(closeFile, SIGNAL(triggered()), this, SLOT(fileClose()));
 }
 
-// Сохранение файла
 void MainWindow::fileSave() {
     int index = mTabWidget->currentIndex();
     if (index >= 0 && index < mCodeEditors.size()) {
@@ -326,7 +318,6 @@ void MainWindow::fileSave() {
     }
 }
 
-// Сохранение файла как новый
 void MainWindow::fileSaveAs() {
     int index = mTabWidget->currentIndex();
     if (index >= 0 && index < mCodeEditors.size()) {
@@ -350,7 +341,6 @@ void MainWindow::fileSaveAs() {
     }
 }
 
-// Закрытие файла
 void MainWindow::fileClose() {
     int index = mTabWidget->currentIndex();
     if (index >= 0 && index < mCodeEditors.size()) {
@@ -368,7 +358,6 @@ void MainWindow::fileClose() {
     }
 }
 
-// Обработка события закрытия окна
 void MainWindow::closeEvent(QCloseEvent* /*event*/) {
     for (int i = 0; i < mCodeEditors.size(); ++i) {
         if (mCodeEditors[i]->needSave()) {
