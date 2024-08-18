@@ -26,5 +26,6 @@
         <file>icons/arrow-left.png</file>
         <file>icons/arrow-right.png</file>
         <file>icons/icon.png</file>
+        <file>icons/plus.png</file>
     </qresource>
 </RCC>

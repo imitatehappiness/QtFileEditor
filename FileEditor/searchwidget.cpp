@@ -53,3 +53,8 @@ void SearchWidget::on_pB_prev_clicked(){
     emit search(ui->lE_search->text(), forwardTypes::prev);
 }
 
+
+void SearchWidget::on_pB_search_clicked(){
+    emit search(ui->lE_search->text(), forwardTypes::all);
+}
+

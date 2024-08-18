@@ -35,6 +35,8 @@ private slots:
 
     void on_pB_prev_clicked();
 
+    void on_pB_search_clicked();
+
 private:
     Ui::SearchWidget *ui;
 };

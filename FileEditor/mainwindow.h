@@ -18,7 +18,7 @@ QT_END_NAMESPACE
 /*!
  * \class MainWindow
  */
-class MainWindow : public QMainWindow{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     /// Constructor
@@ -27,50 +27,36 @@ public:
     ~MainWindow();
 
 private slots:
-    /// Slot for creating a file
     void fileCreate();
-    /// Slot for opening a file
     void fileOpen();
-    /// Slot for saving a file
     void fileSave();
-    /// Slot for saving a file with a specific extension
     void fileSaveAs();
-    /// Slot for closing a file
     void fileClose();
 
-protected:
-    /// Overridden method for closing the application
-    void closeEvent(QCloseEvent* event) override;
-    /// Overridden method for the recommended size of the widget
-    void resizeEvent(QResizeEvent* event) override;
-    /// Overridden method for key press events
-    void keyPressEvent(QKeyEvent* event) override;
-private:
-    /// Open a specific file using its path
-    void fileOpen(QString& path);
-    /// Populate the model (start the thread)
-    void fillModel(QDir dir);
-    /// Display the context menu for the model element
-    void treeMenu(const QPoint &pos);
-    /// Set the text search widget to the correct position
-    void setPositionSearchWidget();
+    void closeTab(int index);
+    void addNewTab();
+    void updateCurrentTab(int index);
 
+protected:
+    void closeEvent(QCloseEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+
+private:
+    void fileOpen(QString& path);
+    void fillModel(QDir dir);
+    void treeMenu(const QPoint &pos);
+    void setPositionSearchWidget();
     void initMenuBar();
     void setSearchWidgetGeometry();
-    void addNewTab(const QString &filename = "");
-    void updateCurrentTabFilename();
 private:
     Ui::MainWindow *ui;
-    /// Name of the current file
-    QString mFilename;
-    /// Status bar label
-    QLabel* mLabelFilename = nullptr;
-    /// Object responsible for notifications
-    Notification* mNotification = nullptr;
-    /// Path to the current file
-    QString mPath;
-    /// File editor
-    CodeEditor* mCodeEditor = nullptr;
-    /// Widget for file search
-    SearchWidget* mSearch = nullptr;
+    QTabWidget *mTabWidget;
+
+    QVector<QString> mFilenames;
+    QVector<CodeEditor*> mCodeEditors;
+
+    Notification* mNotification;
+    QLabel* mLabelFilename;
+    SearchWidget* mSearch;
 };

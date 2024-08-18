@@ -75,7 +75,7 @@ QPushButton:pressed{
 QScrollBar:vertical {
     background-color: rgb(24, 24, 24);
     border-color: rgb(24, 24, 24);
-    width: 10px;
+    width: 15px;
     margin: 3px 3px 3px 3px;
     border-radius: 5px;
 }
@@ -90,7 +90,7 @@ QScrollBar::add-line:vertical {
     background-color: rgb(24, 24, 24);
     border-color: rgb(24, 24, 24);
     height: 0px;
-    width: 10px;
+    width: 15px;
     subcontrol-position: bottom;
     subcontrol-origin: margin;
 }
@@ -172,15 +172,15 @@ QGridLayout{
 }
 
 #MainWindow{
-    background-color: rgb(33, 33, 33);
-    border-bottom: 2px solid rgb(33, 33, 33);
+    background-color: rgb(24, 24, 24);
+    border-bottom: 2px solid rgb(24, 24, 24);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
 #body{
-    background-color: rgb(33, 33, 33);
-    border-bottom: 2px rgb(33, 33, 33);
+    background-color: rgb(24, 24, 24);
+    border-bottom: 2px rgb(24, 24, 24);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
@@ -310,3 +310,77 @@ QInputDialog QPushButton:default:pressed {
 QInputDialog QPushButton:default:hover {
     background-color: rgb(200, 200, 200);
 }
+
+
+/* Основной стиль для QTabWidget */
+QTabWidget::pane { /* Стиль для области с вкладками */
+    background-color: rgb(24,24,24);
+    border: 1px solid #C2C7CB;
+    background: #F5F5F5;
+}
+
+
+QTabWidget::pane {
+    border: 1px solid rgb(24,24,24);
+}
+
+/* Стиль для вкладок в неактивном состоянии */
+QTabBar::tab {
+    color: rgb(24, 24, 24);
+    background: rgb(240, 240, 240);
+    padding: 3px;
+    padding-left: 5px;
+    min-width: 130px;
+    border-left: 2px solid rgb(24, 24, 24);
+    font: bold "Consolas";
+}
+
+/* Стиль для активной вкладки */
+QTabBar::tab:selected {
+    background: rgb(200, 200, 200);
+    color: rgb(24, 24, 24);
+    border-left: 2px solid rgb(33, 33, 33);
+}
+
+/* Стиль для вкладок при наведении */
+QTabBar::tab:hover {
+    background: rgb(240, 240, 240);
+    color: rgb(24, 24, 24);
+    border-left: 2px solid rgb(33, 33, 33);
+}
+
+/* Стиль для вкладок при наведении */
+QTabBar::tab:active {
+    background: darkgreen;
+    border-left: 2px solid rgb(33, 33, 33);
+}
+
+/* Стиль для кнопки закрытия вкладки */
+QTabBar::close-button {
+    image: url(:/resources/icons/close.png); /* Иконка закрытия вкладки */
+    subcontrol-position: right; /* Положение иконки справа */
+}
+
+QTabBar::tab:top:!selected {
+    background: #e0e0e0;
+}
+
+QTabBar::scroller { /* the width of the scroll buttons */
+    width: 50px;
+}
+
+QTabBar::scroll-button:pressed {
+    background: #d0d0d0;
+}
+
+/* Стиль для кнопки листания влево */
+QTabBar::scroll-left {
+    image: url(:/resources/icons/arrow-left.png); /* Иконка для кнопки листания влево */
+}
+
+/* Стиль для кнопки листания вправо */
+QTabBar::scroll-right {
+    image: url(:/resources/icons/arrow-right.png); /* Иконка для кнопки листания вправо */
+}
+
+

@@ -314,6 +314,9 @@
         <property name="styleSheet">
          <string notr="true"/>
         </property>
+        <property name="inputMethodHints">
+         <set>Qt::ImhNone</set>
+        </property>
         <layout class="QGridLayout" name="gridLayout_5">
          <property name="leftMargin">
           <number>0</number>

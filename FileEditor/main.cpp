@@ -21,7 +21,6 @@ int main(int argc, char *argv[]){
 
     if (styleQSS.size() == 0){
         QMessageBox mBox;
-        mBox.setWindowIcon(QIcon("resources/icons/appIcon.png"));
         mBox.setIcon(QMessageBox::Warning);
         mBox.setText("Error appstyles.qss reading! \nThe program may not work correctly!");
         mBox.setButtonText(QMessageBox::Ok, "Ok");
