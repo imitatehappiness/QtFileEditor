@@ -6,7 +6,7 @@ File Editor is a simple custom text editor application built using Qt.
 - **Custom title bar.**
 - **Multy Tabs.**
 - **File MenuBar:** Open/Create/Save/Save as/Close.
-- **Short Cuts:**
+- **Shortcuts:**
   - Ctrl + S = Save,
   - Ctrl + Shift + S = Save AS,
   - Ctrl + F = Search,
