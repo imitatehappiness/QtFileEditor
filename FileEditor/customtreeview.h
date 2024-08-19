@@ -41,19 +41,63 @@ protected:
         }
 
         QAction *renameAction = contextMenu.addAction("Rename");
+        QAction *copyAction = contextMenu.addAction("Copy");
+        QAction *pasteAction = contextMenu.addAction("Paste");
         QAction *deleteAction = contextMenu.addAction("Delete");
 
         connect(openAction, &QAction::triggered, this, [this, index]() { openItem(index); });
         connect(deleteAction, &QAction::triggered, this, [this, index]() { deleteItem(index); });
         connect(renameAction, &QAction::triggered, this, [this, index]() { renameItem(index); });
+        connect(copyAction, &QAction::triggered, this, [this, index]() { copyItem(index); });
+        connect(pasteAction, &QAction::triggered, this, [this, index]() { pasteItem(index); });
+
+        // Enable or disable the Paste action based on whether mСopyPath is set
+        pasteAction->setEnabled(!mCopyPath.isEmpty());
 
         contextMenu.exec(event->globalPos());
     }
 signals:
-    void fileOpen(QString& filePath);
+    void fileOpen(QString& filePath, bool newTab);
+protected:
+    virtual void mouseDoubleClickEvent(QMouseEvent * event) override {
+        QModelIndex index = indexAt(event->pos());
+        if (index.isValid()) {
+            openItem(index);  // Call openItem when an item is double-clicked
+        }
+    }
 private:
-    void createFile(const QModelIndex &index)
-    {
+    QString mCopyPath;
+private:
+    bool copyDirectoryRecursively(const QString &sourcePath, const QString &destinationPath){
+        QDir sourceDir(sourcePath);
+        QDir destDir(destinationPath);
+
+        if (!destDir.exists()) {
+            if (!destDir.mkpath(destinationPath)) {
+                return false;
+            }
+        }
+
+        QFileInfoList entries = sourceDir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+        foreach (const QFileInfo &entry, entries) {
+            QString srcFilePath = entry.absoluteFilePath();
+            QString destFilePath = destDir.filePath(entry.fileName());
+
+            if (entry.isDir()) {
+                if (!copyDirectoryRecursively(srcFilePath, destFilePath)) {
+                    return false;
+                }
+            } else {
+                if (!QFile::copy(srcFilePath, destFilePath)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    void createFile(const QModelIndex &index){
         if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
             QString fileName = QInputDialog::getText(this, "Create File", "Enter file name:");
             if (!fileName.isEmpty()) {
@@ -68,8 +112,7 @@ private:
         }
     }
 
-    void createDirectory(const QModelIndex &index)
-    {
+    void createDirectory(const QModelIndex &index){
         if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
             QString dirName = QInputDialog::getText(this, "Create Directory", "Enter directory name:");
             if (!dirName.isEmpty()) {
@@ -81,8 +124,7 @@ private:
         }
     }
 
-    void deleteItem(const QModelIndex &index)
-    {
+    void deleteItem(const QModelIndex &index){
         if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
             QString itemPath = fsModel->filePath(index);
             QFileInfo fileInfo(itemPath);
@@ -107,8 +149,7 @@ private:
         }
     }
 
-    void renameItem(const QModelIndex &index)
-    {
+    void renameItem(const QModelIndex &index){
         if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
             QString oldName = fsModel->fileName(index);
             QString newName = QInputDialog::getText(this, "Rename", "Enter new name:", QLineEdit::Normal, oldName);
@@ -124,8 +165,7 @@ private:
         }
     }
 
-    void openItem(const QModelIndex &index)
-    {
+    void openItem(const QModelIndex &index){
         if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
             if (fsModel->isDir(index)) {
                 if (!isExpanded(index)) {
@@ -135,7 +175,70 @@ private:
             } else {
                 QString filePath = fsModel->filePath(index);
 
-                emit fileOpen(filePath);
+                emit fileOpen(filePath, true);
+            }
+        }
+    }
+
+    void copyItem(const QModelIndex &index){
+        if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
+            QString itemPath = fsModel->filePath(index);
+            mCopyPath = itemPath;
+        }
+    }
+
+    void pasteItem(const QModelIndex &index){
+        if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
+            if (!mCopyPath.isEmpty()) {
+                QString destinationPath = fsModel->filePath(index);
+                QFileInfo fileInfo(mCopyPath);
+                QString destinationPathFull = destinationPath + "/" + fileInfo.fileName();
+
+                QFileInfo destinationFileInfo(destinationPathFull);
+
+                if (destinationFileInfo.exists()) {
+                    QString message = fileInfo.isDir() ?
+                        "A directory with the same name already exists. Do you want to replace it?" :
+                        "A file with the same name already exists. Do you want to replace it?";
+
+                    QMessageBox::StandardButton reply;
+                    reply = QMessageBox::question(this, "Replace", message,
+                                                  QMessageBox::Yes | QMessageBox::No);
+
+                    if (reply == QMessageBox::No) {
+                        return;
+                    }
+
+                    if (fileInfo.isDir()) {
+                        QDir dir(destinationPathFull);
+                        if (dir.exists()) {
+                            if (!dir.removeRecursively()) {
+                                QMessageBox::warning(this, "Error", "Could not delete existing directory.");
+                                return;
+                            }
+                        }
+                    } else {
+                        if (!QFile::remove(destinationPathFull)) {
+                            QMessageBox::warning(this, "Error", "Could not delete existing file.");
+                            return;
+                        }
+                    }
+                }
+
+                bool success = false;
+                if (fileInfo.isDir()) {
+                    success = copyDirectoryRecursively(mCopyPath, destinationPathFull);
+                } else {
+                    success = QFile::copy(mCopyPath, destinationPathFull);
+                }
+
+                if (!success) {
+                    QMessageBox::warning(this, "Error", fileInfo.isDir() ?
+                        "Could not copy directory." :
+                        "Could not copy file.");
+                }
+
+                mCopyPath.clear();  // Clear the copied path after pasting
             }
         }
     }

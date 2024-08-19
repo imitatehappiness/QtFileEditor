@@ -59,6 +59,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::addNewTab() {
     CodeEditor *newEditor = new CodeEditor();
+
     this->mCodeEditors.append(newEditor);
 
     QString filename = "Untitled";
@@ -122,6 +123,7 @@ void MainWindow::updateCurrentTab(int index) {
 
 void MainWindow::onTabMoved(int from, int to){
     qSwap(this->mFilenames[to], this->mFilenames[from]);
+    qSwap(this->mCodeEditors[to], this->mCodeEditors[from]);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -218,7 +220,7 @@ void MainWindow::initDirTree() {
 
     this->mTree->header()->setFixedHeight(0);
     model->sort(0, Qt::AscendingOrder);
-    connect(this->mTree, SIGNAL(fileOpen(QString&)), this, SLOT(fileOpen(QString&)));
+    connect(this->mTree, SIGNAL(fileOpen(QString&, bool)), this, SLOT(fileOpen(QString&, bool)));
 }
 
 void MainWindow::initTabWidget(){
@@ -258,6 +260,7 @@ void MainWindow::fileCreate() {
 void MainWindow::fileOpen() {
     int index = mTabWidget->currentIndex();
     qDebug() << "Current index changed to:" << index;
+
     if (index >= 0 && index < mCodeEditors.size()) {
         mCodeEditors[index]->clear();
         mCodeEditors[index]->setReadOnly(false);
@@ -293,9 +296,13 @@ void MainWindow::fileOpen() {
     }
 }
 
-void MainWindow::fileOpen(QString &path) {
+void MainWindow::fileOpen(QString &path, bool newTab) {
+    if (newTab){
+       addNewTab();
+    }
     int index = mTabWidget->currentIndex();
     if (index >= 0 && index < mCodeEditors.size()) {
+
         QString filename = path;
         if (filename == "") {
             return;

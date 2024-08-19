@@ -59,13 +59,12 @@ WindowFrame::WindowFrame(QWidget *parent, QWidget *child)
 
     QGraphicsOpacityEffect* opacityEffect = new QGraphicsOpacityEffect(this);
     opacityEffect->setOpacity(0.97);
-    ui->body->setGraphicsEffect(opacityEffect);
+
+    ui->bodyFrame->setGraphicsEffect(opacityEffect);
 
     setWindowOpacity(1.0);
 
     initIcons();
-
-    ui->title->setText(TITLE);
 
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -86,11 +85,6 @@ WindowFrame::~WindowFrame(){
 
 /// @brief Init frame icons.
 void WindowFrame::initIcons(){
-    QPixmap pixmap(headerIcon);
-    ui->icon->setPixmap(pixmap);
-    ui->icon->setScaledContents(true);
-    ui->icon->setAlignment(Qt::AlignCenter);
-
     ui->collapse->setIcon(QIcon(collapseHideIcon));
     ui->close->setIcon(QIcon(closeIcon));
     ui->maximum->setIcon(QIcon(maximizeIcon));
@@ -153,14 +147,14 @@ void WindowFrame::on_collapse_clicked() {
 void WindowFrame::mousePressEvent(QMouseEvent *event) {
     if (event->buttons() == Qt::LeftButton) {
         QWidget* widget = childAt(event->x(), event->y());
-        if(widget == ui->LHeader || widget == ui->title || widget == ui->icon) {
+        if(widget == ui->LHeader) {
             this->mPosition.setX(event->x());
             this->mPosition.setY(event->y());
         }
     }
     if (event->button() == Qt::RightButton ) {
         QWidget* widget = childAt(event->x(), event->y());
-        if (widget == ui->LHeader || widget == ui->title || widget == ui->icon){
+        if (widget == ui->LHeader){
             showHeaderContextMenu(event->pos());
         }
     }

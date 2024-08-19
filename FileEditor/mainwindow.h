@@ -40,7 +40,7 @@ private slots:
     void updateCurrentTab(int index);
     void onTabMoved(int from, int to);
 public slots:
-    void fileOpen(QString& path);
+    void fileOpen(QString& path, bool newTab = false);
 protected:
     void closeEvent(QCloseEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;

@@ -151,6 +151,7 @@ QMenu{
     font: 10pt "Consolas";
 }
 
+
 QMenu::item{
     background-color: #eee;
     color: rgb(24, 24, 24);
@@ -159,6 +160,10 @@ QMenu::item{
 QMenu::item:selected{
     background-color: #007cad;
     color: #eee;
+}
+
+QMenu::item:disabled{
+    color: gray;
 }
 
 QMenuBar{
@@ -315,7 +320,6 @@ QInputDialog QPushButton:default:hover {
     background-color: rgb(200, 200, 200);
 }
 
-
 /* Основной стиль для QTabWidget */
 QTabWidget::pane { /* Стиль для области с вкладками */
     background-color: rgb(24,24,24);
@@ -331,7 +335,6 @@ QTabWidget::pane {
 /* Стиль для вкладок в неактивном состоянии */
 QTabBar::tab {
     color: rgb(24, 24, 24);
-    background: rgb(240, 240, 240);
     padding: 3px;
     padding-left: 5px;
     min-width: 130px;
@@ -341,33 +344,51 @@ QTabBar::tab {
 
 /* Стиль для активной вкладки */
 QTabBar::tab:selected {
-    background: rgb(200, 200, 200);
-    color: rgb(24, 24, 24);
-    border-left: 2px solid rgb(33, 33, 33);
+    color: #eee;
+    background: rgb(24, 24, 24);
+    border-left: 1px solid #007cad;
+    border-right: 1px solid #007cad;
+    border-top: 1px solid #007cad;
+    border-bottom: 1px solid rgb(24, 24, 24);
 }
 
 /* Стиль для вкладок при наведении */
 QTabBar::tab:hover {
-    background: rgb(240, 240, 240);
-    color: rgb(24, 24, 24);
-    border-left: 2px solid rgb(33, 33, 33);
+    color: #eee;
+    background: rgb(24, 24, 24);
+    border-left: 1px solid #007cad;
+    border-right: 1px solid #007cad;
+    border-top: 1px solid #007cad;
+    border-bottom: 1px solid rgb(24, 24, 24);
 }
+
 
 /* Стиль для вкладок при наведении */
 QTabBar::tab:active {
-    background: #007cad;
-    border-left: 2px solid rgb(33, 33, 33);
+    color: #eee;
+    background: rgb(24, 24, 24);
+    border-left: 1px solid #007cad;
+    border-right: 1px solid #007cad;
+    border-top: 1px solid #007cad;
+    border-bottom: 1px solid rgb(24, 24, 24);
+}
+
+
+QTabBar::tab:top:!selected {
+    color: #eee;
+    background: rgb(24, 24, 24);
+    border-left: rgb(24, 24, 24);
+    border-right: rgb(24, 24, 24);
+    border-top: rgb(24, 24, 24);
+    border-bottom: 1px solid #007cad;
 }
 
 /* Стиль для кнопки закрытия вкладки */
 QTabBar::close-button {
-    image: url(:/resources/icons/close.png); /* Иконка закрытия вкладки */
+    image: url(:/resources/icons/close_light.png); /* Иконка закрытия вкладки */
     subcontrol-position: right; /* Положение иконки справа */
 }
 
-QTabBar::tab:top:!selected {
-    background: #e0e0e0;
-}
 
 QTabBar::scroller { /* the width of the scroll buttons */
     width: 50px;
