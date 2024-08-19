@@ -147,6 +147,7 @@ QToolTip{
 
 QMenu{
     font: 10pt "Consolas";
+
 }
 
 
@@ -167,6 +168,10 @@ QMenu::item:disabled{
 QMenuBar{
     font: 10pt "Consolas";
     font-weight: bold;
+    background-color: rgb(24, 24, 24);
+    color: #eee;
+    padding: 3px;
+    border-bottom: 1px solid rgb(33,33,33);
 }
 
 QMenuBar::item:selected{
