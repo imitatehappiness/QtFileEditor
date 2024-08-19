@@ -37,6 +37,8 @@ signals:
 public slots:
     /// Slot for file search
     void search(const QString& str, forwardTypes forward);
+    /// Slot for file replace
+    void replace(const QString& from, const QString& to, replaceTypes replace);
     /// Slot to handle text changes
     void onTextChanged();
 private slots:

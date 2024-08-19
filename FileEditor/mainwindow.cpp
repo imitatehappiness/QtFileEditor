@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     mNotification = new Notification(this);
     mSearch = new SearchWidget(this);
     mSearch->hide();
+
     mStatusBarLabel = new QLabel();
     this->mStatusBarLabel->setStyleSheet("color: #eee; font-style: italic;");
     ui->statusbar->addWidget(mStatusBarLabel);
@@ -81,6 +82,7 @@ void MainWindow::addNewTab() {
     ui->statusbar->addWidget(newLabel);
 
     connect(mSearch, &SearchWidget::search, newEditor, &CodeEditor::search);
+    connect(mSearch, &SearchWidget::replace, newEditor, &CodeEditor::replace);
 
     mStatusBarLabel->setText(filename);
 
@@ -150,7 +152,16 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
                 }
             }
         }else{
-            mSearch->hide();
+
+            QTextCursor cursor = mCodeEditors[index]->textCursor();
+            if (cursor.hasSelection()) {
+                QString selectedText = cursor.selectedText();
+                if (selectedText.size() > 0) {
+                    mSearch->setSearchText(selectedText);
+                }
+            }else{
+               mSearch->hide();
+            }
         }
     }
 
@@ -177,12 +188,11 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
 }
 
 void MainWindow::setSearchWidgetGeometry() {
-
     if (mCodeEditors.size() > 0){
         int searchWidth = mSearch->width();
         int searchHeight = mSearch->height();
 
-        mSearch->setGeometry(ui->centralwidget->width() - searchWidth - 50, 83, searchWidth, searchHeight);
+        mSearch->setGeometry(ui->centralwidget->width() - searchWidth - 50, 80, searchWidth, searchHeight);
         mSearch->raise();
     }
 }
@@ -259,7 +269,6 @@ void MainWindow::fileCreate() {
 
 void MainWindow::fileOpen() {
     int index = mTabWidget->currentIndex();
-    qDebug() << "Current index changed to:" << index;
 
     if (index >= 0 && index < mCodeEditors.size()) {
         mCodeEditors[index]->clear();

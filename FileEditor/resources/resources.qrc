@@ -27,5 +27,7 @@
         <file>icons/arrow-right.png</file>
         <file>icons/icon.png</file>
         <file>icons/plus.png</file>
+        <file>icons/check_ mark_all.png</file>
+        <file>icons/check_ mark_current.png</file>
     </qresource>
 </RCC>

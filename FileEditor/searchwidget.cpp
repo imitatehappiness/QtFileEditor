@@ -58,3 +58,12 @@ void SearchWidget::on_pB_search_clicked(){
     emit search(ui->lE_search->text(), forwardTypes::all);
 }
 
+void SearchWidget::on_pB_replaceCurrent_clicked(){
+    emit replace(ui->lE_search->text(), ui->lE_replace->text(), replaceTypes::replaceCurrent);
+}
+
+
+void SearchWidget::on_pB_replaceAll_clicked(){
+    emit replace(ui->lE_search->text(), ui->lE_replace->text(), replaceTypes::replaceAll);
+}
+

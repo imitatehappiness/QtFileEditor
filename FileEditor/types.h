@@ -7,3 +7,8 @@ enum forwardTypes{
     next,
     prev
 };
+
+enum replaceTypes{
+    replaceCurrent = 0,
+    replaceAll
+};

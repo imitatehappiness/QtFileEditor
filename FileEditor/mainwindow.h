@@ -62,6 +62,5 @@ private:
     Notification* mNotification;
     QLabel* mStatusBarLabel;
     SearchWidget* mSearch;
-
     CustomTreeView* mTree;
 };

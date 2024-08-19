@@ -165,14 +165,43 @@ void CodeEditor::search(const QString& str, forwardTypes forward) {
     }
 }
 
+void CodeEditor::replace(const QString &from, const QString &to, replaceTypes replace) {
+    if (from.isEmpty()) {
+        return;
+    }
+
+    QTextCursor cursor = textCursor();
+    QTextDocument::FindFlags flags = QTextDocument::FindCaseSensitively;
+
+    if (replace == replaceTypes::replaceAll) {
+        cursor.beginEditBlock();
+        QTextCursor startCursor = QTextCursor(document()->begin());
+        QTextCursor result = document()->find(from, startCursor, flags);
+
+        while (!result.isNull()) {
+            result.insertText(to);
+            startCursor = result;
+            result = document()->find(from, startCursor, flags);
+        }
+
+        cursor.endEditBlock(); // End the edit block
+    }else if (replace == replaceTypes::replaceCurrent) {
+        QTextCursor result = textCursor();
+
+        if (result.hasSelection() && result.selectedText() == from) {
+            result.insertText(to);
+            setTextCursor(result);
+        }
+
+        search(from, forwardTypes::next);
+    }
+}
 void CodeEditor::onTextChanged() {
     QString currentText = this->toPlainText();
     currentText.replace("\r\n", "\n");
 
     this->mSourceText.replace("\r\n", "\n");
     this->mNeedSave = this->mSourceText != currentText;
-
-    qDebug() << "mNeedSave: " << this->mNeedSave;
 }
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */){

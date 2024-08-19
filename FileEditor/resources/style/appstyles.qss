@@ -1,3 +1,4 @@
+
 QMainWindow {
     font: 12pt "Consolas";
 }
@@ -395,5 +396,11 @@ QTabBar::scroll-button:pressed {
     background: #d0d0d0;
 }
 
-
+QToolTip{
+    marign: 5px;
+    font: 10pt "Consolas";
+    color: rgb(24, 24, 24);
+    border: 1px solid rgb(24, 24, 24);
+    border-radius: 0px;
+}
 

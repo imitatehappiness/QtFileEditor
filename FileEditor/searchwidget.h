@@ -24,6 +24,9 @@ public:
 signals:
     /// Signal to start the search
     void search(const QString& str, forwardTypes forward);
+    /// Signal to start the replace
+    void replace(const QString& from, const QString& to, replaceTypes replace);
+
 public slots:
     /// Overridden method to display the widget
     void show();
@@ -36,6 +39,10 @@ private slots:
     void on_pB_prev_clicked();
 
     void on_pB_search_clicked();
+
+    void on_pB_replaceCurrent_clicked();
+
+    void on_pB_replaceAll_clicked();
 
 private:
     Ui::SearchWidget *ui;
