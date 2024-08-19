@@ -177,7 +177,7 @@ void MainWindow::setSearchWidgetGeometry() {
         int searchWidth = mSearch->width();
         int searchHeight = mSearch->height();
 
-        mSearch->setGeometry(ui->centralwidget->width() - searchWidth - 50, 80, searchWidth, searchHeight);
+        mSearch->setGeometry(ui->centralwidget->width() - searchWidth - 50, 83, searchWidth, searchHeight);
         mSearch->raise();
     }
 }
@@ -187,6 +187,7 @@ void MainWindow::initDirTree() {
     model->setRootPath("");
 
     this->mTree = new CustomTreeView(this);
+    this->mTree->setStyleSheet("border: 0px;");
     this->mTree->setModel(model);
 
     this->mTree->setAnimated(false);

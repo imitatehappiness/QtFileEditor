@@ -5,8 +5,7 @@ QMainWindow {
 QTreeView {
     selection-background-color: #376489;
     background-color: rgb(24, 24, 24);
-    border: 1px solid rgb(24, 24, 24);
-    border-radius: 5px;
+
     color: #eee;
 }
 
@@ -62,7 +61,7 @@ QLineEdit{
     padding-left: 3px;
     padding-right: 3px;
     font: 10pt "Consolas";
-    selection-background-color: green;
+    selection-background-color: #376489;
 }
 
 QPushButton{
@@ -158,7 +157,7 @@ QMenu::item{
 }
 
 QMenu::item:selected{
-    background-color: green;
+    background-color: #376489;
     color: #eee;
 }
 
@@ -168,7 +167,7 @@ QMenuBar{
 }
 
 QMenuBar::item:selected{
-    background-color: green;
+    background-color: #376489;;
     color: #eee;
 }
 

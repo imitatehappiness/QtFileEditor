@@ -62,8 +62,7 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">
-</string>
+        <string notr="true"/>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -93,6 +92,9 @@
        </property>
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
        </property>
       </widget>
      </widget>
