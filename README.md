@@ -12,7 +12,7 @@ File Editor is a simple custom text editor application built using Qt.
   - Ctrl + F = Open/Close search panel,
   - Ctrl + R = Open new tab
   - Ctrl + E = Close current tab
-  - Ctre + Q = Open/Close dir manager.
+  - Ctrl + Q = Open/Close dir manager.
 - **Line Numbering:** Automatically display line numbers alongside the text for easy code navigation.
 - **Real-time Search:** Search and highlight occurrences of a specific string within the code.
 - **Custom Notifications:** Visual notifications with smooth fade-in and fade-out animations.
