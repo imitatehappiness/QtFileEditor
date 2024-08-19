@@ -12,6 +12,8 @@
 #include <QDir>
 #include <QPushButton>
 #include <QTabBar>
+#include <QSplitter>
+#include <QHeaderView>
 
 #include "codeeditor.h"
 #include "notification.h"
@@ -22,20 +24,13 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow) {
 
     ui->setupUi(this);
-    setWindowOpacity(0.97);
     setWindowIcon(QIcon(":/resources/icons/icon.png"));
+
+    initDirTree();
+    initTabWidget();
 
     this->statusBar()->setSizeGripEnabled(false);
     this->initMenuBar();
-
-    mTabWidget = new QTabWidget();
-    mTabWidget->setContentsMargins(0, 0, 0, 0);
-
-    mTabWidget->setTabsClosable(true);
-    mTabWidget->setMovable(true);
-
-    connect(mTabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
-    connect(mTabWidget, &QTabWidget::currentChanged, this, &MainWindow::updateCurrentTab);
 
     QPushButton *addTabButton = new QPushButton(this);
     addTabButton->setIcon(QIcon(":resources/icons/plus.png"));
@@ -52,7 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->statusbar->addWidget(mLabelFilename);
 
     addNewTab();
-    setCentralWidget(mTabWidget);
+    ui->frameTree->setMinimumWidth(200);
+    ui->splitter->setSizes(QList<int>() << 200 << 700);
 }
 
 MainWindow::~MainWindow() {
@@ -166,19 +162,75 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
         int index = mTabWidget->currentIndex();
         closeTab(index);
     }
+    if ((event->modifiers() & Qt::ControlModifier) && key == Qt::Key_Q) {
+        if (ui->frameTree->isHidden()){
+            ui->frameTree->show();
+        }else{
+            ui->frameTree->hide();
+        }
+    }
 }
 
 void MainWindow::setSearchWidgetGeometry() {
 
     if (mCodeEditors.size() > 0){
-        int index = mTabWidget->currentIndex();
-        int editorWidth = mCodeEditors[index]->width();
         int searchWidth = mSearch->width();
         int searchHeight = mSearch->height();
 
-        mSearch->setGeometry(editorWidth - searchWidth - 20, 61, searchWidth, searchHeight);
+        mSearch->setGeometry(ui->centralwidget->width() - searchWidth - 50, 80, searchWidth, searchHeight);
         mSearch->raise();
     }
+}
+
+void MainWindow::initDirTree() {
+    QFileSystemModel *model = new QFileSystemModel(this);
+    model->setRootPath("");
+
+    this->mTree = new CustomTreeView(this);
+    this->mTree->setStyleSheet("border-right: 2px solid rgb(33,33,33); border-radius: 0px;");
+    this->mTree->setModel(model);
+
+    this->mTree->setAnimated(false);
+    this->mTree->setIndentation(20);
+    this->mTree->setSortingEnabled(true);
+
+    this->mTree->setColumnWidth(0, 100);
+
+    QScroller::grabGesture(this->mTree, QScroller::TouchGesture);
+
+    QVBoxLayout *layout = new QVBoxLayout(ui->frameTree);
+    layout->addWidget(this->mTree);
+    ui->frameTree->setLayout(layout);
+
+    for (int i = 1; i < model->columnCount(); ++i) {
+        this->mTree->setColumnHidden(i, true);
+    }
+
+    const QString rootPath = "/";
+    if (!rootPath.isEmpty()) {
+        const QModelIndex rootIndex = model->index(QDir::cleanPath(rootPath));
+        if (rootIndex.isValid())
+            this->mTree->setRootIndex(rootIndex);
+    }
+
+    this->mTree->header()->setFixedHeight(0);
+    model->sort(0, Qt::AscendingOrder);
+    connect(this->mTree, SIGNAL(fileOpen(QString&)), this, SLOT(fileOpen(QString&)));
+}
+
+void MainWindow::initTabWidget(){
+    mTabWidget = new QTabWidget();
+    mTabWidget->setContentsMargins(0, 0, 0, 0);
+
+    mTabWidget->setTabsClosable(true);
+    mTabWidget->setMovable(true);
+
+    connect(mTabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
+    connect(mTabWidget, &QTabWidget::currentChanged, this, &MainWindow::updateCurrentTab);
+
+    QVBoxLayout *layout = new QVBoxLayout(ui->frameEditor);
+    layout->addWidget(mTabWidget);
+    ui->frameTree->setLayout(layout);
 }
 
 void MainWindow::fileCreate() {
@@ -225,7 +277,6 @@ void MainWindow::fileOpen() {
 
             QString tabName = QFileInfo(filename).fileName();
             mTabWidget->setTabText(index, tabName.length() > 15 ? "..." + tabName.right(15) : tabName);
-
             mLabelFilename->setText(filename);
         } else {
             QMessageBox mBox;
@@ -252,6 +303,7 @@ void MainWindow::fileOpen(QString &path) {
             QTextStream stream(&file);
             stream.setCodec("UTF-8");
             QString buf = stream.readAll();
+            mCodeEditors[index]->setSourceText(buf);
             mCodeEditors[index]->setPlainText(buf);
             mLabelFilename->setText(filename);
             mCodeEditors[index]->setFileExtension(filename);
@@ -270,17 +322,21 @@ void MainWindow::fileOpen(QString &path) {
             mBox.exec();
         }
         file.close();
+
+        mCodeEditors[index]->setNeedSave(false);
     }
 }
 
 void MainWindow::initMenuBar(){
     QMenu *menuFile = menuBar()->addMenu("&File");
-    auto *openFile = new QAction("&Open", this);
+    auto *openDir = new QAction("&Open dir", this);
+    auto *openFile = new QAction("&Open file", this);
     auto *createFile = new QAction("&Create", this);
     auto *saveFile = new QAction("&Save", this);
     auto *saveAsFile = new QAction("&Save as", this);
     auto *closeFile = new QAction("&Close", this);
 
+    menuFile->addAction(openDir);
     menuFile->addAction(openFile);
     menuFile->addAction(createFile);
     menuFile->addAction(saveFile);
@@ -292,6 +348,7 @@ void MainWindow::initMenuBar(){
     connect(saveFile, SIGNAL(triggered()), this, SLOT(fileSave()));
     connect(saveAsFile, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(closeFile, SIGNAL(triggered()), this, SLOT(fileClose()));
+    connect(openDir, SIGNAL(triggered()), this, SLOT(openDir()));
 }
 
 void MainWindow::fileSave() {
@@ -355,6 +412,35 @@ void MainWindow::fileClose() {
             mCodeEditors[index]->setFileExtension("");
             mCodeEditors[index]->updateSyntaxHighlighter();
         }
+    }
+}
+
+void MainWindow::openDir()
+{
+    // Открываем диалоговое окно выбора директории
+    QString directory = QFileDialog::getExistingDirectory(
+        this,                       // Родительский виджет
+        tr("Select Directory"),     // Заголовок окна
+        QDir::homePath(),           // Начальная директория (например, домашняя директория)
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks // Опции диалога
+    );
+
+    if (!directory.isEmpty()) {
+        QFileSystemModel *model = qobject_cast<QFileSystemModel*>(this->mTree->model());
+        if (model) {
+            const QModelIndex rootIndex = model->index(QDir::cleanPath(directory));
+            if (rootIndex.isValid()) {
+                this->mTree->setRootIndex(rootIndex);
+
+                model->sort(0, Qt::AscendingOrder);
+            } else {
+                qDebug() << "Invalid directory index.";
+            }
+        } else {
+            qDebug() << "Model is not valid.";
+        }
+    } else {
+        qDebug() << "No directory selected.";
     }
 }
 

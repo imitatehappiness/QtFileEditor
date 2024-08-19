@@ -29,6 +29,7 @@ HEADERS += \
     codeeditor.h \
     cppsyntaxhighlighter.h \
     csssyntaxhighlighter.h \
+    customtreeview.h \
     htmlsyntaxhighlighter.h \
     jsonsyntaxhighlighter.h \
     mainwindow.h \

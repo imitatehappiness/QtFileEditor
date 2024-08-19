@@ -171,6 +171,8 @@ void CodeEditor::onTextChanged() {
 
     this->mSourceText.replace("\r\n", "\n");
     this->mNeedSave = this->mSourceText != currentText;
+
+    qDebug() << "mNeedSave: " << this->mNeedSave;
 }
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */){

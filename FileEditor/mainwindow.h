@@ -6,6 +6,8 @@
 #include <QDir>
 #include <QTabWidget>
 
+#include "customtreeview.h"
+
 QT_BEGIN_NAMESPACE
 class Notification;
 class CodeEditor;
@@ -32,23 +34,23 @@ private slots:
     void fileSave();
     void fileSaveAs();
     void fileClose();
-
+    void openDir();
     void closeTab(int index);
     void addNewTab();
     void updateCurrentTab(int index);
-
+public slots:
+    void fileOpen(QString& path);
 protected:
     void closeEvent(QCloseEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
-
 private:
-    void fileOpen(QString& path);
     void fillModel(QDir dir);
     void treeMenu(const QPoint &pos);
-    void setPositionSearchWidget();
     void initMenuBar();
     void setSearchWidgetGeometry();
+    void initDirTree();
+    void initTabWidget();
 private:
     Ui::MainWindow *ui;
     QTabWidget *mTabWidget;
@@ -59,4 +61,6 @@ private:
     Notification* mNotification;
     QLabel* mLabelFilename;
     SearchWidget* mSearch;
+
+    CustomTreeView* mTree;
 };

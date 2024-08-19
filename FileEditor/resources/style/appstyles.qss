@@ -1,9 +1,9 @@
 QMainWindow {
-    font: 12pt "Consolas";
+    font: 12pt "Consolas"; 
 }
 
 QTreeView {
-    selection-background-color: green;
+    selection-background-color: #376489;
     background-color: rgb(24, 24, 24);
     border: 1px solid rgb(24, 24, 24);
     border-radius: 5px;
@@ -31,6 +31,10 @@ QTextEdit {
     color: #eee;
 }
 
+QFrame{
+    background-color: rgb(24, 24, 24);
+}
+
 QPlainTextEdit {
     font: 12pt "Consolas";
     background-color: rgb(24, 24, 24);
@@ -42,8 +46,9 @@ QPlainTextEdit {
 }
 
 MainWindow{
-    background-color: #eee;
-    color: rgb(24, 24, 24);
+    border-bottom: 2px solid rgb(24, 24, 24);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 QLabel{
@@ -107,7 +112,7 @@ QScrollBar::sub-line:vertical {
 QPlainTextEdit QScrollBar:horizontal {
     background-color: rgb(24, 24, 24);
     border-color: rgb(24, 24, 24);
-    height: 10px;
+    height: 15px;
     margin: 3px 3px 3px 3px;
     border-radius: 5px;
 }
@@ -121,7 +126,7 @@ QPlainTextEdit QScrollBar::handle:horizontal {
 QScrollBar::add-line:horizontal {
     background-color: rgb(24, 24, 24);
     height: 0px;
-    width: 10px;
+    width: 15px;
     subcontrol-position: bottom;
     subcontrol-origin: margin;
 }
@@ -129,7 +134,7 @@ QScrollBar::add-line:horizontal {
 QScrollBar::sub-line:horizontal {
     background-color: rgb(24, 24, 24);
     height: 0px;
-    width: 10px;
+    width: 15px;
     subcontrol-position: top;
     subcontrol-origin: margin;
 }
@@ -172,13 +177,12 @@ QGridLayout{
 }
 
 #MainWindow{
-    background-color: rgb(24, 24, 24);
     border-bottom: 2px solid rgb(24, 24, 24);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
-#body{
+#bodyFrame{
     background-color: rgb(24, 24, 24);
     border-bottom: 2px rgb(24, 24, 24);
     border-bottom-left-radius: 10px;
@@ -229,12 +233,13 @@ QPushButton#close{
 
 QStatusBar{
     background-color: rgb(24, 24, 24);
+    border-bottom: 2px solid rgb(24, 24, 24);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
 QMessageBox {
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(24, 24, 24);
     color: #eee;
     border: 1px solid rgb(30, 30, 30);
     border-radius: 5px;
@@ -273,7 +278,7 @@ QMessageBox QPushButton:default:hover {
 }
 
 QInputDialog {
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(24, 24, 24);
     color: #eee;
     border: 1px solid rgb(30, 30, 30);
     border-radius: 5px;
@@ -367,20 +372,12 @@ QTabBar::tab:top:!selected {
 
 QTabBar::scroller { /* the width of the scroll buttons */
     width: 50px;
+    background: rgb(240, 240, 240);
 }
 
 QTabBar::scroll-button:pressed {
     background: #d0d0d0;
 }
 
-/* Стиль для кнопки листания влево */
-QTabBar::scroll-left {
-    image: url(:/resources/icons/arrow-left.png); /* Иконка для кнопки листания влево */
-}
-
-/* Стиль для кнопки листания вправо */
-QTabBar::scroll-right {
-    image: url(:/resources/icons/arrow-right.png); /* Иконка для кнопки листания вправо */
-}
 
 
