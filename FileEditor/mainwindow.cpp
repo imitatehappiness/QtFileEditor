@@ -38,13 +38,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     mTabWidget->setCornerWidget(addTabButton, Qt::TopRightCorner);
     connect(addTabButton, &QPushButton::clicked, this, &MainWindow::addNewTab);
+    connect(mTabWidget->tabBar(), &QTabBar::tabMoved, this, &MainWindow::onTabMoved);
 
     mNotification = new Notification(this);
     mSearch = new SearchWidget(this);
     mSearch->hide();
-    mLabelFilename = new QLabel();
-    this->mLabelFilename->setStyleSheet("color: #eee; font-style: italic;");
-    ui->statusbar->addWidget(mLabelFilename);
+    mStatusBarLabel = new QLabel();
+    this->mStatusBarLabel->setStyleSheet("color: #eee; font-style: italic;");
+    ui->statusbar->addWidget(mStatusBarLabel);
 
     addNewTab();
     ui->frameTree->setMinimumWidth(200);
@@ -80,7 +81,7 @@ void MainWindow::addNewTab() {
 
     connect(mSearch, &SearchWidget::search, newEditor, &CodeEditor::search);
 
-    mLabelFilename->setText(filename);
+    mStatusBarLabel->setText(filename);
 
     mTabWidget->tabBar()->setExpanding(true);
 }
@@ -101,7 +102,7 @@ void MainWindow::closeTab(int index) {
 
         if (mCodeEditors.size() > 0){
             index = mTabWidget->currentIndex();
-            mLabelFilename->setText(mFilenames[index]);
+            mStatusBarLabel->setText(mFilenames[index]);
         }
     }
 
@@ -111,19 +112,21 @@ void MainWindow::closeTab(int index) {
 }
 
 void MainWindow::updateCurrentTab(int index) {
-    qDebug() << "index: " << index;
-    qDebug() << "mFilenames: " << mFilenames.size();
     if (index >= 0){
-        mLabelFilename->setText(mFilenames[index]);
+        mStatusBarLabel->setText(mFilenames[index]);
     }else if(mFilenames.size() >= 1){
-        mLabelFilename->setText(mFilenames[0]);
+        mStatusBarLabel->setText(mFilenames[0]);
     }
 
 }
 
+void MainWindow::onTabMoved(int from, int to){
+    qSwap(this->mFilenames[to], this->mFilenames[from]);
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event) {
     QMainWindow::resizeEvent(event);
-    setSearchWidgetGeometry();
+    this->setSearchWidgetGeometry();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
@@ -240,14 +243,14 @@ void MainWindow::fileCreate() {
         QString filename = QInputDialog::getText(this, tr("Create file"), tr("Enter the file name:"), QLineEdit::Normal);
         if (filename.size() > 0) {
             mCodeEditors[index]->clear();
-            mLabelFilename->setText(filename);
+            mStatusBarLabel->setText(filename);
             mCodeEditors[index]->setFileExtension(filename);
             mCodeEditors[index]->updateSyntaxHighlighter();
 
             QString tabName = QFileInfo(filename).fileName();
             mTabWidget->setTabText(index, tabName);
 
-            mLabelFilename->setText(filename);
+            mStatusBarLabel->setText(filename);
         }
     }
 }
@@ -270,14 +273,14 @@ void MainWindow::fileOpen() {
             QString buf = stream.readAll();
             mCodeEditors[index]->setSourceText(buf);
             mCodeEditors[index]->appendPlainText(buf);
-            mLabelFilename->setText(filename);
+            mStatusBarLabel->setText(filename);
             mCodeEditors[index]->setFileExtension(filename);
             mCodeEditors[index]->updateSyntaxHighlighter();
             mFilenames[index] = filename;
 
             QString tabName = QFileInfo(filename).fileName();
             mTabWidget->setTabText(index, tabName.length() > 15 ? "..." + tabName.right(15) : tabName);
-            mLabelFilename->setText(filename);
+            mStatusBarLabel->setText(filename);
         } else {
             QMessageBox mBox;
             mBox.setWindowIcon(QIcon(":/resources/icons/icon.png"));
@@ -305,14 +308,14 @@ void MainWindow::fileOpen(QString &path) {
             QString buf = stream.readAll();
             mCodeEditors[index]->setSourceText(buf);
             mCodeEditors[index]->setPlainText(buf);
-            mLabelFilename->setText(filename);
+            mStatusBarLabel->setText(filename);
             mCodeEditors[index]->setFileExtension(filename);
             mCodeEditors[index]->updateSyntaxHighlighter();
             mFilenames[index] = filename;
 
             QString tabName = QFileInfo(filename).fileName();
             mTabWidget->setTabText(index, tabName.length() > 15 ? "..." + tabName.right(15) : tabName);
-            mLabelFilename->setText(filename);
+            mStatusBarLabel->setText(filename);
         } else {
             QMessageBox mBox;
             mBox.setWindowIcon(QIcon(":/resources/icons/icon.png"));
@@ -408,21 +411,19 @@ void MainWindow::fileClose() {
             return;
         } else {
             mCodeEditors[index]->clear();
-            mLabelFilename->setText("");
+            mStatusBarLabel->setText("");
             mCodeEditors[index]->setFileExtension("");
             mCodeEditors[index]->updateSyntaxHighlighter();
         }
     }
 }
 
-void MainWindow::openDir()
-{
-    // Открываем диалоговое окно выбора директории
+void MainWindow::openDir(){
     QString directory = QFileDialog::getExistingDirectory(
-        this,                       // Родительский виджет
-        tr("Select Directory"),     // Заголовок окна
-        QDir::homePath(),           // Начальная директория (например, домашняя директория)
-        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks // Опции диалога
+        this,
+        tr("Select Directory"),
+        QDir::homePath(),
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
     );
 
     if (!directory.isEmpty()) {

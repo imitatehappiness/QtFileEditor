@@ -62,7 +62,7 @@ void CodeEditor::setFileExtension(QString filename){
 }
 
 void CodeEditor::search(const QString& str, forwardTypes forward) {
-    const QColor highlightColor("#376489");
+    const QColor highlightColor("#007cad");
     const QColor textColor("#EEEEEE");
 
     if (str.isEmpty()) {
@@ -253,7 +253,7 @@ void CodeEditor::highlightCurrentLine(){
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event){
     const QColor lineNumberAreaColor(24, 24, 24);
     const QColor separatorLineColor(33, 33, 33);
-    const QColor lineNumberColor("green");
+    const QColor lineNumberColor("#007cad");
     const QFont lineNumberFont("Consolas", 12);
 
     QPainter painter(this->mLineNumberArea);

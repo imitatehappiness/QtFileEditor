@@ -38,6 +38,7 @@ private slots:
     void closeTab(int index);
     void addNewTab();
     void updateCurrentTab(int index);
+    void onTabMoved(int from, int to);
 public slots:
     void fileOpen(QString& path);
 protected:
@@ -59,7 +60,7 @@ private:
     QVector<CodeEditor*> mCodeEditors;
 
     Notification* mNotification;
-    QLabel* mLabelFilename;
+    QLabel* mStatusBarLabel;
     SearchWidget* mSearch;
 
     CustomTreeView* mTree;

@@ -3,7 +3,7 @@ QMainWindow {
 }
 
 QTreeView {
-    selection-background-color: #376489;
+    selection-background-color: #007cad;
     background-color: rgb(24, 24, 24);
 
     color: #eee;
@@ -40,7 +40,7 @@ QPlainTextEdit {
     border: 1px solid rgb(24, 24, 24);
     border-radius: 5px;
     color: #eee;
-    selection-background-color: #376489;
+    selection-background-color: #007cad;
     selection-color: #eee;
 }
 
@@ -61,7 +61,7 @@ QLineEdit{
     padding-left: 3px;
     padding-right: 3px;
     font: 10pt "Consolas";
-    selection-background-color: #376489;
+    selection-background-color: #007cad;
 }
 
 QPushButton{
@@ -157,7 +157,7 @@ QMenu::item{
 }
 
 QMenu::item:selected{
-    background-color: #376489;
+    background-color: #007cad;
     color: #eee;
 }
 
@@ -167,7 +167,7 @@ QMenuBar{
 }
 
 QMenuBar::item:selected{
-    background-color: #376489;;
+    background-color: #007cad;;
     color: #eee;
 }
 
@@ -355,7 +355,7 @@ QTabBar::tab:hover {
 
 /* Стиль для вкладок при наведении */
 QTabBar::tab:active {
-    background: darkgreen;
+    background: #007cad;
     border-left: 2px solid rgb(33, 33, 33);
 }
 
