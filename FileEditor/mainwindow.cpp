@@ -263,6 +263,7 @@ void MainWindow::fileCreate() {
             mTabWidget->setTabText(index, tabName);
 
             mStatusBarLabel->setText(filename);
+            mFilenames[index] = filename;
         }
     }
 }
