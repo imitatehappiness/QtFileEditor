@@ -331,7 +331,7 @@ void MainWindow::initMenuBar(){
     QMenu *menuFile = menuBar()->addMenu("&File");
     auto *openDir = new QAction("&Open dir", this);
     auto *openFile = new QAction("&Open file", this);
-    auto *createFile = new QAction("&Create", this);
+    auto *createFile = new QAction("&Create new file", this);
     auto *saveFile = new QAction("&Save", this);
     auto *saveAsFile = new QAction("&Save as", this);
     auto *closeFile = new QAction("&Close", this);
