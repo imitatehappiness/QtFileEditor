@@ -187,7 +187,6 @@ void MainWindow::initDirTree() {
     model->setRootPath("");
 
     this->mTree = new CustomTreeView(this);
-    this->mTree->setStyleSheet("border-right: 2px solid rgb(33,33,33); border-radius: 0px;");
     this->mTree->setModel(model);
 
     this->mTree->setAnimated(false);
