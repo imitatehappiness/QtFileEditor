@@ -39,6 +39,24 @@
    <string notr="true">background-color: rgb(255, 255, 255);</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>4</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLineEdit" name="lE_search">
      <property name="minimumSize">
@@ -181,22 +199,7 @@
       <string>Close</string>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    font: 10pt;
-    background-color: #eee;
-    border: 1px solid #eee;
-    color: #EEEEEE;
-    border-radius: 4px;
-}
-
-QPushButton:hover{
-    color: #EEEEEE;
-}
-
-QPushButton:pressed {
-    border: 1px solid #eee;
-    border-radius: 5px;
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string/>

@@ -5,6 +5,7 @@
 #include <QStandardItemModel>
 #include <QDir>
 #include <QTabWidget>
+#include <QListWidget>
 
 #include "customtreeview.h"
 
@@ -41,6 +42,7 @@ private slots:
     void onTabMoved(int from, int to);
 public slots:
     void fileOpen(QString& path, bool newTab = false);
+    void onOpenPageItemDoubleClicked(QListWidgetItem* item);
 protected:
     void closeEvent(QCloseEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
@@ -50,8 +52,9 @@ private:
     void treeMenu(const QPoint &pos);
     void initMenuBar();
     void setSearchWidgetGeometry();
-    void initDirTree();
+    void initLeftPanel();
     void initTabWidget();
+    void updateOpenPagesList();
 private:
     Ui::MainWindow *ui;
     QTabWidget *mTabWidget;
@@ -62,5 +65,6 @@ private:
     Notification* mNotification;
     QLabel* mStatusBarLabel;
     SearchWidget* mSearch;
-    CustomTreeView* mTree;
+    CustomDirTreeView* mDirTree;
+    QListWidget *mOpenPagesList;
 };

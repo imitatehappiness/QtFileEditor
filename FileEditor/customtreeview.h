@@ -15,12 +15,12 @@
 #include <QContextMenuEvent>
 #include <QMessageBox>
 
-class CustomTreeView : public QTreeView
+class CustomDirTreeView : public QTreeView
 {
     Q_OBJECT
 
 public:
-    CustomTreeView(QWidget *parent = nullptr) : QTreeView(parent) {}
+    CustomDirTreeView(QWidget *parent = nullptr) : QTreeView(parent) {}
 
 protected:
     void contextMenuEvent(QContextMenuEvent *event) override

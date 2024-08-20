@@ -35,15 +35,10 @@ private slots:
     void on_pB_close_clicked();
     void on_lE_search_textChanged(const QString &arg1);
     void on_pB_next_clicked();
-
     void on_pB_prev_clicked();
-
     void on_pB_search_clicked();
-
     void on_pB_replaceCurrent_clicked();
-
     void on_pB_replaceAll_clicked();
-
 private:
     Ui::SearchWidget *ui;
 };
