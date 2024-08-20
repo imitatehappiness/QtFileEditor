@@ -26,5 +26,5 @@ File Editor is a simple custom text editor application built using Qt.
 ## Example
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/2247f54d-7594-4129-8701-fc8debee97de"/>
+  <img src="https://github.com/user-attachments/assets/d6aabd65-aded-413d-9785-cb89d372380d"/>
 <div/>
