@@ -317,8 +317,7 @@ QInputDialog QPushButton:default:hover {
     background-color: rgb(200, 200, 200);
 }
 
-/* Основной стиль для QTabWidget */
-QTabWidget::pane { /* Стиль для области с вкладками */
+QTabWidget::pane {
     background-color: rgb(24,24,24);
     border: 1px solid #C2C7CB;
     background: #F5F5F5;
@@ -329,7 +328,6 @@ QTabWidget::pane {
     border: 1px solid rgb(24,24,24);
 }
 
-/* Стиль для вкладок в неактивном состоянии */
 QTabBar::tab {
     color: rgb(24, 24, 24);
     padding: 3px;
@@ -339,7 +337,6 @@ QTabBar::tab {
     font: bold "Consolas";
 }
 
-/* Стиль для активной вкладки */
 QTabBar::tab:selected {
     color: #eee;
     background: rgb(24, 24, 24);
@@ -349,7 +346,6 @@ QTabBar::tab:selected {
     border-bottom: 1px solid rgb(24, 24, 24);
 }
 
-/* Стиль для вкладок при наведении */
 QTabBar::tab:hover {
     color: #eee;
     background: rgb(24, 24, 24);
@@ -360,7 +356,6 @@ QTabBar::tab:hover {
 }
 
 
-/* Стиль для вкладок при наведении */
 QTabBar::tab:active {
     color: #eee;
     background: rgb(24, 24, 24);
@@ -383,20 +378,46 @@ QTabBar::tab:top:!selected {
     border-bottom: 1px solid #007cad;
 }
 
-/* Стиль для кнопки закрытия вкладки */
 QTabBar::close-button {
-    image: url(:/resources/icons/close_light.png); /* Иконка закрытия вкладки */
-    subcontrol-position: right; /* Положение иконки справа */
+    image: url(:/resources/icons/close_light.png);
+    subcontrol-position: right;
 }
 
 
-QTabBar::scroller { /* the width of the scroll buttons */
-    width: 50px;
+QTabBar::scroller {
+    width: 60px;
     background: rgb(240, 240, 240);
 }
 
-QTabBar::scroll-button:pressed {
-    background: #d0d0d0;
+QTabBar QToolButton {
+    border: 2px solid rgb(24, 24, 24);
+
+}
+
+QTabBar QToolButton::right-arrow:hover, QToolButton::left-arrow:hover {
+    background: #05648a;
+    border: 1px solid #05648a;
+    border-radius: 4px;
+}
+
+QTabBar QToolButton::right-arrow:disabled, QToolButton::left-arrow:disabled {
+    background: rgb(60, 60, 60);
+    border: 1px solid rgb(60, 60, 60);
+    border-radius: 4px;
+}
+
+QTabBar QToolButton::right-arrow {
+    image: url(:/resources/icons/arrow-right_light.png);
+    background: #007cad;
+    border: 1px solid #007cad;
+    border-radius: 4px;
+}
+
+QTabBar QToolButton::left-arrow {
+    image: url(:/resources/icons/arrow-left_light.png);
+    background: #007cad;
+    border: 1px solid #007cad;
+    border-radius: 4px;
 }
 
 QToolTip{

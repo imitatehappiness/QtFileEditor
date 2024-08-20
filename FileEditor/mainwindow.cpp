@@ -34,7 +34,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     QPushButton *addTabButton = new QPushButton(this);
     addTabButton->setIcon(QIcon(":resources/icons/plus.png"));
-    addTabButton->setStyleSheet("background-color: rgb(24,24,24); border: 1px solid rgb(24,24,24); margin-left: 10px; padding-right: 10px; padding-bottom: 1px;");
+
+    addTabButton->setStyleSheet(
+        "QPushButton {"
+        "    background-color: #007cad;"
+        "    border: 1px solid #007cad;"
+        "    border-radius: 4px;"
+        "    padding-right: 0px;"
+        "    margin-left: 1px;"
+        "    height: 22px;"
+        "    width: 22px;"
+        "}"
+
+        "QPushButton:hover {"
+        "   background: #05648a;"
+        "   border: 1px solid #05648a;"
+        "   border-radius: 4px;"
+        "}"
+    );
 
     mTabWidget->setCornerWidget(addTabButton, Qt::TopRightCorner);
     connect(addTabButton, &QPushButton::clicked, this, &MainWindow::addNewTab);

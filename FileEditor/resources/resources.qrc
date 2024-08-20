@@ -29,5 +29,7 @@
         <file>icons/plus.png</file>
         <file>icons/check_ mark_all.png</file>
         <file>icons/check_ mark_current.png</file>
+        <file>icons/arrow-left_light.png</file>
+        <file>icons/arrow-right_light.png</file>
     </qresource>
 </RCC>
