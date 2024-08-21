@@ -64,15 +64,15 @@ WindowFrame::WindowFrame(QWidget *parent, QWidget *child)
 
     setWindowOpacity(1.0);
 
-    initIcons();
+    this->initIcons();
 
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
     setAttribute(Qt::WA_TranslucentBackground);
 
     if(child != nullptr) {
         ui->body->layout()->addWidget(child);
-        mMainBody = child;
-        mMainBody->installEventFilter(this);
+        this->mMainBody = child;
+        this->mMainBody->installEventFilter(this);
         resize(child->size());
     }
     this->mIsCollapse = false;
@@ -105,7 +105,7 @@ void WindowFrame::showHeaderContextMenu(const QPoint &pos){
 
 /// @brief Handler for the "Close" button click signal.
 void WindowFrame::on_close_clicked(){
-    mChild->close();
+    this->mChild->close();
 }
 
 /// @brief Handler for the "Maximize/Restore" button click signal.

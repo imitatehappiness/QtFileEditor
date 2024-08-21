@@ -26,11 +26,8 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    /// Constructor
     MainWindow(QWidget *parent = nullptr);
-    /// Destructor
     ~MainWindow();
-
 private slots:
     void fileCreate();
     void fileOpen();
@@ -43,6 +40,7 @@ private slots:
     void updateCurrentTab(int index);
     void onTabMoved(int from, int to);
     void clearTerminal();
+    void updateCharactersCount(int count);
 public slots:
     void fileOpen(QString& path, bool newTab = false);
     void onOpenPageItemDoubleClicked(QListWidgetItem* item);
@@ -57,16 +55,19 @@ private:
     void setSearchWidgetGeometry();
     void initLeftPanel();
     void initMainPanel();
+    void initStatusBar();
     void updateOpenPagesList();
 private:
     Ui::MainWindow *ui;
+
     QTabWidget *mTabWidget;
 
     QVector<QString> mFilenames;
     QVector<CodeEditor*> mCodeEditors;
 
     Notification* mNotification;
-    QLabel* mStatusBarLabel;
+    QLabel* mStatusBarFilePathLabel;
+    QLabel* mStatusBarCharactersCountLabel;
     SearchWidget* mSearch;
     CustomDirTreeView* mDirTree;
     QListWidget *mOpenPagesList;

@@ -10,15 +10,15 @@
 #include <QTextBlock>
 #include <QTextCursor>
 
-TermWidget::TermWidget(QWidget *parent): QWidget(parent),
+TermWidget::TermWidget(QWidget *parent):
+    QWidget(parent),
     outEnd(0)
 {
     out = new QPlainTextEdit(this);
     out->setStyleSheet("padding: 10px;");
     out->setLineWrapMode(QPlainTextEdit::NoWrap);
     out->installEventFilter(this);
-    int wid = out->fontMetrics().width(QLatin1Char('9'));
-    out->setCursorWidth(wid);
+    out->setCursorWidth(3);
     out->setAcceptDrops(false);
 
     QVBoxLayout *l = new QVBoxLayout(this);
@@ -31,20 +31,17 @@ TermWidget::TermWidget(QWidget *parent): QWidget(parent),
     connect(proc,SIGNAL(error(QProcess::ProcessError)),this,SLOT(error(QProcess::ProcessError)));
 
     menu = new QMenu(this);
-    menuActCopy      = menu->addAction(tr("Copy"),  out,  SLOT(copy()),
-                                       QKeySequence(Qt::CTRL  + Qt::Key_Insert));
+    menuActCopy = menu->addAction(tr("Copy"), out, SLOT(copy()), QKeySequence(Qt::CTRL  + Qt::Key_Insert));
     menuActCopy->setEnabled(false);
     connect(out, SIGNAL(copyAvailable(bool)), menuActCopy, SLOT(setEnabled(bool)));
-    menuActPaste     = menu->addAction(tr("Paste"), this, SLOT(paste()),
-                                       QKeySequence(Qt::SHIFT + Qt::Key_Insert));
+    menuActPaste = menu->addAction(tr("Paste"),this,SLOT(paste()), QKeySequence(Qt::SHIFT + Qt::Key_Insert));
     menuActSelectAll = menu->addAction(tr("Select All"), out, SLOT(selectAll()));
     menu->addSeparator();
-    menuActClear     = menu->addAction(tr("Clear"), out, SLOT(clear()));
+    menuActClear = menu->addAction(tr("Clear"), out, SLOT(clear()));
 
     execute();
 
     new TerminalSyntaxHighlighter(out->document());
-
 }
 
 TermWidget::~TermWidget(){
@@ -52,20 +49,14 @@ TermWidget::~TermWidget(){
 }
 
 void TermWidget::clear() {
-    // Clear the output widget
     out->clear();
-
-    // Reset the outEnd to 0
     outEnd = 0;
-
-    // If a process is currently running, kill it
     if (proc->state() == QProcess::Running) {
         proc->kill();
-        proc->waitForFinished(); // Ensure the process is completely terminated
+        proc->waitForFinished();
         out->clear();
     }
 
-    // Start a new process
     execute();
 }
 
@@ -137,11 +128,9 @@ void TermWidget::processOutput(){
 
 void TermWidget::finished(int exitCode, QProcess::ExitStatus exitStatus){
     QString str("<b>Process has ");
-    if( exitStatus == QProcess::NormalExit ) str += QString("finished");
-    else                                     str += QString("crashed");
+    str += exitStatus == QProcess::NormalExit ? QString("finished") : QString("crashed");
     str += QString(" with code %1</b>").arg(exitCode);
     out->appendHtml(str);
-
     proc->setProcessChannelMode(QProcess::SeparateChannels);
 }
 
@@ -158,94 +147,67 @@ void TermWidget::error(QProcess::ProcessError error){
 }
 
 bool TermWidget::eventFilter(QObject *obj, QEvent *event){
-
-    if(obj == out)
-    {
-        if(event->type() == QEvent::KeyPress)
-        {
+    if(obj == out){
+        if(event->type() == QEvent::KeyPress){
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 
-            if(keyEvent->key() == Qt::Key_Up
-                    ||keyEvent->key() == Qt::Key_Down)
-            {
+            if(keyEvent->key() == Qt::Key_Up ||keyEvent->key() == Qt::Key_Down){
                 return true;
             }
 
-            if(keyEvent->key() == Qt::Key_Backspace
-                    ||keyEvent->key() == Qt::Key_Left)
-            {
-                if(outEnd < out->textCursor().position()) return false;
-
-                return true;
+            if(keyEvent->key() == Qt::Key_Backspace || keyEvent->key() == Qt::Key_Left){
+                return outEnd < out->textCursor().position() ? false : true;
             }
 
-            if(keyEvent->key() == Qt::Key_Delete
-                    ||keyEvent->key() == Qt::Key_Right)
-            {
-                if(outEnd <= out->textCursor().position()) return false;
-
-                return true;
+            if(keyEvent->key() == Qt::Key_Delete || keyEvent->key() == Qt::Key_Right){
+                return outEnd <= out->textCursor().position() ? false : true;
             }
 
-            if(keyEvent->key() == Qt::Key_Return)
-            {
+            if(keyEvent->key() == Qt::Key_Return){
                 processInput();
-
                 return true;
             }
 
-            if(keyEvent->key() == Qt::Key_Home)
-            {
-                if(outEnd < out->textCursor().position())
-                {
+            if(keyEvent->key() == Qt::Key_Home){
+                if(outEnd < out->textCursor().position()){
                     setTextCursorAtInput();
                 }
-
                 return true;
             }
 
-            if(keyEvent->key() == Qt::Key_End)
-            {
-                if(outEnd <= out->textCursor().position())
-                {
+            if(keyEvent->key() == Qt::Key_End){
+                if(outEnd <= out->textCursor().position()){
                     setTextCursorAtEnd();
                 }
-
                 return true;
             }
 
-            if(keyEvent->key() == Qt::Key_Control
-                    ||keyEvent->key() == Qt::Key_Shift)
-            {
+            if(keyEvent->key() == Qt::Key_Control || keyEvent->key() == Qt::Key_Shift){
                 return false;
             }
 
-            if(keyEvent->key() == Qt::Key_Insert)
-            {
-                if(keyEvent->modifiers() & Qt::ControlModifier) return false;
-                if((keyEvent->modifiers() & Qt::ShiftModifier)
-                        && out->canPaste()) paste();
-
+            if(keyEvent->key() == Qt::Key_Insert){
+                if(keyEvent->modifiers() & Qt::ControlModifier){
+                    return false;
+                }
+                if((keyEvent->modifiers() & Qt::ShiftModifier) && out->canPaste()){
+                    paste();
+                }
                 return true;
             }
 
-            if(outEnd > out->textCursor().position())
-            {
+            if(outEnd > out->textCursor().position()){
                 setTextCursorAtEnd();
             }
 
             return false;
         }
-        else if(event->type() == QEvent::MouseButtonPress)
-        {
+        else if(event->type() == QEvent::MouseButtonPress){
             QMouseEvent * mouseEvent = static_cast<QMouseEvent *>(event);
 
-            if(mouseEvent->buttons() & Qt::RightButton)
-            {
+            if(mouseEvent->buttons() & Qt::RightButton){
                 menuActPaste->setEnabled(out->canPaste());
-
                 menu->exec(mouseEvent->globalPos());
-
                 return true;
             }
         }

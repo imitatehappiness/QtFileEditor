@@ -28,12 +28,15 @@ public:
     bool needSave() const;
     void setNeedSave(const bool &newNeedSave);
     void setSourceText(const QString &newSourceText);
+    QString sourceText() const;
+    int getCharactersCount();
 protected:
     /// Overrides the recommended size method for the widget
     void resizeEvent(QResizeEvent* event);
 signals:
     /// Signal to display the text search widget
     void showWidgetFileSearch();
+    void editorUpdateText(int count);
 public slots:
     /// Slot for file search
     void search(const QString& str, forwardTypes forward);

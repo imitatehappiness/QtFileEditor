@@ -196,12 +196,16 @@ void CodeEditor::replace(const QString &from, const QString &to, replaceTypes re
         search(from, forwardTypes::next);
     }
 }
+
 void CodeEditor::onTextChanged() {
     QString currentText = this->toPlainText();
     currentText.replace("\r\n", "\n");
 
     this->mSourceText.replace("\r\n", "\n");
     this->mNeedSave = this->mSourceText != currentText;
+
+    int characterCount = currentText.remove(QChar('\n')).remove(QChar('\r')).length();
+    emit editorUpdateText(characterCount);
 }
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */){
@@ -218,6 +222,17 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy){
     if (rect.contains(viewport()->rect())){
         this->updateLineNumberAreaWidth(0);
     }
+}
+
+QString CodeEditor::sourceText() const{
+    return mSourceText;
+}
+
+int CodeEditor::getCharactersCount(){
+    QString currentText = this->toPlainText();
+    currentText.replace("\r\n", "\n");
+
+    return currentText.remove(QChar('\n')).remove(QChar('\r')).length();
 }
 
 void CodeEditor::setSourceText(const QString &newSourceText){

@@ -11,6 +11,8 @@ SearchWidget::SearchWidget(QWidget *parent) :
     setWindowIcon(QIcon("resources/icons/search.png"));
     setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
+
+    hide();
 }
 
 SearchWidget::~SearchWidget(){

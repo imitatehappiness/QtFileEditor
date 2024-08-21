@@ -21,53 +21,19 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow) {
-
+    , ui(new Ui::MainWindow)
+    , mNotification(new Notification(this))
+    , mSearch(new SearchWidget(this))
+{
     ui->setupUi(this);
     setWindowIcon(QIcon(":/resources/icons/icon.png"));
 
-    initLeftPanel();
-    initMainPanel();
-
-    this->statusBar()->setSizeGripEnabled(false);
+    this->initLeftPanel();
+    this->initMainPanel();
+    this->initStatusBar();
     this->initMenuBar();
 
-    QPushButton *addTabButton = new QPushButton(this);
-    addTabButton->setIcon(QIcon(":resources/icons/plus.png"));
-
-    addTabButton->setStyleSheet(
-        "QPushButton {"
-        "    background-color: #eee;"
-        "    border: 1px solid #eee;"
-        "    border-radius: 4px;"
-        "    padding-right: 0px;"
-        "    margin-left: 1px;"
-        "    height: 22px;"
-        "    width: 22px;"
-        "}"
-
-        "QPushButton:hover {"
-        "   background: gray;"
-        "   border: 1px solid gray;"
-        "   border-radius: 4px;"
-        "}"
-    );
-
-    mTabWidget->setCornerWidget(addTabButton, Qt::TopRightCorner);
-    connect(addTabButton, &QPushButton::clicked, this, &MainWindow::addNewTab);
-    connect(mTabWidget->tabBar(), &QTabBar::tabMoved, this, &MainWindow::onTabMoved);
-
-    mNotification = new Notification(this);
-    mSearch = new SearchWidget(this);
-    mSearch->hide();
-
-    mStatusBarLabel = new QLabel();
-    this->mStatusBarLabel->setStyleSheet("color: #eee; font-style: italic;");
-    ui->statusbar->addWidget(mStatusBarLabel);
-
-    addNewTab();
-    ui->frameTree->setMinimumWidth(200);
-    ui->splitter_2->setSizes(QList<int>() << 200 << 700);
+    this->addNewTab();
 }
 
 MainWindow::~MainWindow() {
@@ -93,44 +59,45 @@ void MainWindow::addNewTab() {
     layout->addWidget(newEditor);
     newTab->setLayout(layout);
 
-    mTabWidget->addTab(newTab, filename);
-    mTabWidget->setCurrentWidget(newTab);
+    this->mTabWidget->addTab(newTab, filename);
+    this->mTabWidget->setCurrentWidget(newTab);
 
     ui->statusbar->addWidget(newLabel);
 
     connect(mSearch, &SearchWidget::search, newEditor, &CodeEditor::search);
     connect(mSearch, &SearchWidget::replace, newEditor, &CodeEditor::replace);
+    connect(this->mCodeEditors.last(), &CodeEditor::editorUpdateText, this, &MainWindow::updateCharactersCount);
 
-    mStatusBarLabel->setText(filename);
+    this->mStatusBarFilePathLabel->setText(filename);
 
-    mTabWidget->tabBar()->setExpanding(true);
+    this->mTabWidget->tabBar()->setExpanding(true);
 
-    updateOpenPagesList();
+    this->updateOpenPagesList();
 }
 
 void MainWindow::closeTab(int index) {
-    if (index >= 0 && index < mTabWidget->count()) {
+    if (index >= 0 && index < this->mTabWidget->count()) {
 
-        QWidget *widget = mTabWidget->widget(index);
+        QWidget *widget = this->mTabWidget->widget(index);
         if (widget) {
-            if (mCodeEditors[index]->needSave()){
+            if (this->mCodeEditors[index]->needSave()){
                 fileClose();
             }
 
-            mTabWidget->removeTab(index);
+            this->mTabWidget->removeTab(index);
             delete widget;
         }
 
         if (index < mCodeEditors.size()) {
 
-            mCodeEditors.remove(index);
-            mFilenames.remove(index);
-            mTabWidget->setFocus();
+            this->mCodeEditors.remove(index);
+            this->mFilenames.remove(index);
+            this->mTabWidget->setFocus();
         }
 
         if (mCodeEditors.size() > 0){
-            index = mTabWidget->currentIndex();
-            mStatusBarLabel->setText(mFilenames[index]);
+            index = this->mTabWidget->currentIndex();
+            this->mStatusBarFilePathLabel->setText(mFilenames[index]);
         }
     }
 
@@ -143,21 +110,23 @@ void MainWindow::closeTab(int index) {
 
 void MainWindow::updateCurrentTab(int index) {
     if (index >= 0){
-        mStatusBarLabel->setText(mFilenames[index]);
-    }else if(mFilenames.size() >= 1){
-        mStatusBarLabel->setText(mFilenames[0]);
+        this->mStatusBarFilePathLabel->setText(mFilenames[index]);
+        this->mStatusBarCharactersCountLabel->setText("Characters: " + QString::number(this->mCodeEditors[index]->getCharactersCount()));
     }
-
 }
 
 void MainWindow::onTabMoved(int from, int to){
     qSwap(this->mFilenames[to], this->mFilenames[from]);
     qSwap(this->mCodeEditors[to], this->mCodeEditors[from]);
-    updateOpenPagesList();
+    this->updateOpenPagesList();
 }
 
 void MainWindow::clearTerminal(){
-    mTermWidget->clear();
+    this->mTermWidget->clear();
+}
+
+void MainWindow::updateCharactersCount(int count){
+    this->mStatusBarCharactersCountLabel->setText("Characters: " + QString::number(count));
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -167,55 +136,50 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
     int key = event->key();
-    int index = mTabWidget->currentIndex();
+    int index = this->mTabWidget->currentIndex();
 
-    if (mCodeEditors.size() > 0 && event->modifiers() == Qt::ControlModifier && key == Qt::Key_F) {
+    if (this->mCodeEditors.size() > 0 && event->modifiers() == Qt::ControlModifier && key == Qt::Key_F) {
 
         if (mSearch->isHidden()){
-            setSearchWidgetGeometry();
-            mSearch->setSearchFocus();
-            mSearch->show();
+            this->setSearchWidgetGeometry();
+            this->mSearch->setSearchFocus();
+            this->mSearch->show();
 
             QTextCursor cursor = mCodeEditors[index]->textCursor();
             if (cursor.hasSelection()) {
                 QString selectedText = cursor.selectedText();
                 if (selectedText.size() > 0) {
-                    mSearch->setSearchText(selectedText);
+                    this->mSearch->setSearchText(selectedText);
                 }
             }
         }else{
-
             QTextCursor cursor = mCodeEditors[index]->textCursor();
             if (cursor.hasSelection()) {
                 QString selectedText = cursor.selectedText();
                 if (selectedText.size() > 0) {
-                    mSearch->setSearchText(selectedText);
+                    this->mSearch->setSearchText(selectedText);
                 }
             }else{
-               mSearch->hide();
+               this->mSearch->hide();
             }
         }
     }
 
     if (event->modifiers() == Qt::ControlModifier && key == Qt::Key_S) {
-        fileSave();
+        this->fileSave();
     }
     if ((event->modifiers() & Qt::ControlModifier) && (event->modifiers() & Qt::ShiftModifier) && key == Qt::Key_S) {
-        fileSaveAs();
+        this->fileSaveAs();
     }
     if ((event->modifiers() & Qt::ControlModifier) && key == Qt::Key_R) {
-        addNewTab();
+        this->addNewTab();
     }
     if ((event->modifiers() & Qt::ControlModifier) && key == Qt::Key_E) {
-        int index = mTabWidget->currentIndex();
-        closeTab(index);
+        int index = this->mTabWidget->currentIndex();
+        this->closeTab(index);
     }
     if ((event->modifiers() & Qt::ControlModifier) && key == Qt::Key_Q) {
-        if (ui->frameTree->isHidden()){
-            ui->frameTree->show();
-        }else{
-            ui->frameTree->hide();
-        }
+        ui->frameTree->isHidden() ? ui->frameTree->show() : ui->frameTree->hide();
     }
 }
 
@@ -224,15 +188,16 @@ void MainWindow::setSearchWidgetGeometry() {
         int searchWidth = mSearch->width();
         int searchHeight = mSearch->height();
 
-        mSearch->setGeometry(ui->centralwidget->width() - searchWidth - 40, 73, searchWidth, searchHeight);
-        mSearch->raise();
+        this->mSearch->setGeometry(ui->centralwidget->width() - searchWidth - 40, 73, searchWidth, searchHeight);
+        this->mSearch->raise();
     }
 }
 
 void MainWindow::initLeftPanel() {
+    ui->frameTree->setMinimumWidth(200);
+
     QFileSystemModel *model = new QFileSystemModel(this);
     model->setRootPath("");
-
     this->mDirTree = new CustomDirTreeView(this);
     this->mDirTree->setStyleSheet("border: 0px;");
     this->mDirTree->setModel(model);
@@ -282,14 +247,14 @@ void MainWindow::initLeftPanel() {
 }
 
 void MainWindow::initMainPanel(){
-    mTabWidget = new QTabWidget();
-    mTabWidget->setContentsMargins(9, 0, 0, 0);
+    this->mTabWidget = new QTabWidget();
+    this->mTabWidget->setContentsMargins(9, 0, 0, 0);
 
-    mTabWidget->setTabsClosable(true);
-    mTabWidget->setMovable(true);
+    this->mTabWidget->setTabsClosable(true);
+    this->mTabWidget->setMovable(true);
 
-    connect(mTabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
-    connect(mTabWidget, &QTabWidget::currentChanged, this, &MainWindow::updateCurrentTab);
+    connect(this->mTabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
+    connect(this->mTabWidget, &QTabWidget::currentChanged, this, &MainWindow::updateCurrentTab);
 
     QVBoxLayout *layout = new QVBoxLayout(ui->frameEditor);
     layout->addWidget(mTabWidget);
@@ -297,56 +262,99 @@ void MainWindow::initMainPanel(){
 
     ui->frameTree->setLayout(layout);
 
-    ui->splitter->setSizes(QList<int>() << 300 << 100);
+    ui->splitterEditorAndTerminal->setSizes(QList<int>() << 300 << 100);
 
-    mTermWidget = new TermWidget(this);
-    mTermWidget->setContentsMargins(9, 0, 0, 0);
-    mTermWidget->setStyleSheet("font: 12px;");
+    // Terminal
+    this->mTermWidget = new TermWidget(this);
+    this->mTermWidget->setContentsMargins(9, 0, 0, 0);
+    this->mTermWidget->setStyleSheet("font: 12px;");
 
     QVBoxLayout *layoutTerm = new QVBoxLayout(ui->frameEditor);
     layoutTerm->setContentsMargins(0, 0, 0, 0);
-    layoutTerm->addWidget(mTermWidget);
+    layoutTerm->addWidget(this->mTermWidget);
     ui->frameTerminal->setLayout(layoutTerm);
+
+    // addTabButton
+    QPushButton *addTabButton = new QPushButton(this);
+    addTabButton->setIcon(QIcon(":resources/icons/plus.png"));
+
+    addTabButton->setStyleSheet(
+        "QPushButton {"
+        "    background-color: #eee;"
+        "    border: 1px solid #eee;"
+        "    border-radius: 4px;"
+        "    padding-right: 0px;"
+        "    margin-left: 1px;"
+        "    height: 22px;"
+        "    width: 22px;"
+        "}"
+
+        "QPushButton:hover {"
+        "   background: gray;"
+        "   border: 1px solid gray;"
+        "   border-radius: 4px;"
+        "}"
+    );
+
+    this->mTabWidget->setCornerWidget(addTabButton, Qt::TopRightCorner);
+    connect(addTabButton, &QPushButton::clicked, this, &MainWindow::addNewTab);
+    connect(mTabWidget->tabBar(), &QTabBar::tabMoved, this, &MainWindow::onTabMoved);
+
+    ui->splitterLeftAndMain->setSizes(QList<int>() << 200 << 700);
+}
+
+void MainWindow::initStatusBar(){
+    this->mStatusBarFilePathLabel = new QLabel();
+    this->mStatusBarFilePathLabel->setStyleSheet("color: #007cad;");
+    ui->statusbar->addWidget(mStatusBarFilePathLabel, 1);
+
+    this->mStatusBarCharactersCountLabel = new QLabel();
+    this->mStatusBarCharactersCountLabel->setFixedWidth(250);
+    this->mStatusBarCharactersCountLabel->setAlignment(Qt::AlignRight);
+    this->mStatusBarCharactersCountLabel->setStyleSheet("color: #007cad; padding-right: 10px");
+
+    ui->statusbar->addPermanentWidget(mStatusBarCharactersCountLabel);
+
+    this->statusBar()->setSizeGripEnabled(false);
 }
 
 void MainWindow::updateOpenPagesList(){
     this->mOpenPagesList->clear();
     for (const QString &filename : mFilenames) {
         QFileInfo file(filename);
-        qDebug() << file.fileName();
         this->mOpenPagesList->addItem(file.fileName());
     }
 }
 
 void MainWindow::fileCreate() {
     int index = mTabWidget->currentIndex();
-    if (index >= 0 && index < mCodeEditors.size()) {
-        mCodeEditors[index]->setReadOnly(false);
+    if (index >= 0 && index < this->mCodeEditors.size()) {
+        this->mCodeEditors[index]->setReadOnly(false);
         QString filename = QInputDialog::getText(this, tr("Create file"), tr("Enter the file name:"), QLineEdit::Normal);
         if (filename.size() > 0) {
-            mCodeEditors[index]->clear();
-            mStatusBarLabel->setText(filename);
-            mCodeEditors[index]->setFileExtension(filename);
-            mCodeEditors[index]->updateSyntaxHighlighter();
-            mCodeEditors[index]->setNeedSave(true);
+            this->mCodeEditors[index]->clear();
+            this->mStatusBarFilePathLabel->setText(filename);
+            this->mCodeEditors[index]->setFileExtension(filename);
+            this->mCodeEditors[index]->updateSyntaxHighlighter();
+            this->mCodeEditors[index]->setNeedSave(true);
 
             QString tabName = QFileInfo(filename).fileName();
-            mTabWidget->setTabText(index, tabName);
+            this->mTabWidget->setTabText(index, tabName);
 
-            mStatusBarLabel->setText(filename);
-            mFilenames[index] = filename;
+            this->mStatusBarFilePathLabel->setText(filename);
+            this->mFilenames[index] = filename;
 
-            updateOpenPagesList();
+            this->updateOpenPagesList();
         }
     }
 }
 
 void MainWindow::fileOpen() {
-    int index = mTabWidget->currentIndex();
+    int index = this->mTabWidget->currentIndex();
 
-    if (index >= 0 && index < mCodeEditors.size()) {
-        mCodeEditors[index]->clear();
-        mCodeEditors[index]->setReadOnly(false);
+    if (index >= 0 && index < this->mCodeEditors.size()) {
+        this->mCodeEditors[index]->clear();
+        this->mCodeEditors[index]->setReadOnly(false);
         QString filename = QFileDialog::getOpenFileName(this, "Open file", "", "Text files (*.*)");
 
         if (filename == "") {
@@ -357,16 +365,16 @@ void MainWindow::fileOpen() {
             QTextStream stream(&file);
             stream.setCodec("UTF-8");
             QString buf = stream.readAll();
-            mCodeEditors[index]->setSourceText(buf);
-            mCodeEditors[index]->appendPlainText(buf);
-            mStatusBarLabel->setText(filename);
-            mCodeEditors[index]->setFileExtension(filename);
-            mCodeEditors[index]->updateSyntaxHighlighter();
-            mFilenames[index] = filename;
+            this->mCodeEditors[index]->setSourceText(buf);
+            this->mCodeEditors[index]->appendPlainText(buf);
+            this->mStatusBarFilePathLabel->setText(filename);
+            this->mCodeEditors[index]->setFileExtension(filename);
+            this->mCodeEditors[index]->updateSyntaxHighlighter();
+            this->mFilenames[index] = filename;
 
             QString tabName = QFileInfo(filename).fileName();
-            mTabWidget->setTabText(index, tabName.length() > 15 ? "..." + tabName.right(15) : tabName);
-            mStatusBarLabel->setText(filename);
+            this->mTabWidget->setTabText(index, tabName.length() > 15 ? "..." + tabName.right(15) : tabName);
+            this->mStatusBarFilePathLabel->setText(filename);
 
             updateOpenPagesList();
         } else {
@@ -383,10 +391,10 @@ void MainWindow::fileOpen() {
 
 void MainWindow::fileOpen(QString &path, bool newTab) {
     if (newTab){
-       addNewTab();
+       this->addNewTab();
     }
     int index = mTabWidget->currentIndex();
-    if (index >= 0 && index < mCodeEditors.size()) {
+    if (index >= 0 && index < this->mCodeEditors.size()) {
 
         QString filename = path;
         if (filename == "") {
@@ -398,18 +406,18 @@ void MainWindow::fileOpen(QString &path, bool newTab) {
             QTextStream stream(&file);
             stream.setCodec("UTF-8");
             QString buf = stream.readAll();
-            mCodeEditors[index]->setSourceText(buf);
-            mCodeEditors[index]->setPlainText(buf);
-            mStatusBarLabel->setText(filename);
-            mCodeEditors[index]->setFileExtension(filename);
-            mCodeEditors[index]->updateSyntaxHighlighter();
+            this->mCodeEditors[index]->setSourceText(buf);
+            this->mCodeEditors[index]->setPlainText(buf);
+            this->mStatusBarFilePathLabel->setText(filename);
+            this->mCodeEditors[index]->setFileExtension(filename);
+            this->mCodeEditors[index]->updateSyntaxHighlighter();
             mFilenames[index] = filename;
 
             QString tabName = QFileInfo(filename).fileName();
-            mTabWidget->setTabText(index, tabName.length() > 15 ? "..." + tabName.right(15) : tabName);
-            mStatusBarLabel->setText(filename);
+            this->mTabWidget->setTabText(index, tabName.length() > 15 ? "..." + tabName.right(15) : tabName);
+            this->mStatusBarFilePathLabel->setText(filename);
 
-            updateOpenPagesList();
+            this->updateOpenPagesList();
         } else {
             QMessageBox mBox;
             mBox.setWindowIcon(QIcon(":/resources/icons/icon.png"));
@@ -420,14 +428,14 @@ void MainWindow::fileOpen(QString &path, bool newTab) {
         }
         file.close();
 
-        mCodeEditors[index]->setNeedSave(false);
+        this->mCodeEditors[index]->setNeedSave(false);
     }
 }
 
 void MainWindow::onOpenPageItemDoubleClicked(QListWidgetItem *item){
     if (item) {
-        int index = mOpenPagesList->row(item);
-        mTabWidget->setCurrentIndex(index);
+        int index = this->mOpenPagesList->row(item);
+        this->mTabWidget->setCurrentIndex(index);
     }
 }
 
@@ -459,40 +467,38 @@ void MainWindow::initMenuBar(){
     auto *clearTerminal = new QAction("&Clear", this);
     menuTerminal->addAction(clearTerminal);
     connect(clearTerminal, SIGNAL(triggered()), this, SLOT(clearTerminal()));
-
-
 }
 
 void MainWindow::fileSave() {
-    int index = mTabWidget->currentIndex();
-    if (index >= 0 && index < mCodeEditors.size()) {
-        QFileInfo info(mFilenames[index]);
+    int index = this->mTabWidget->currentIndex();
+    if (index >= 0 && index < this->mCodeEditors.size()) {
+        QFileInfo info(this->mFilenames[index]);
 
         if (info.exists()) {
-            QFile file(mFilenames[index]);
+            QFile file(this->mFilenames[index]);
             if (file.open(QIODevice::WriteOnly)) {
-                QString buf = mCodeEditors[index]->toPlainText();
+                QString buf = this->mCodeEditors[index]->toPlainText();
                 QTextStream stream(&file);
                 stream.setCodec("UTF-8");
                 stream << buf;
                 file.close();
-                mNotification->setNotificationText("Saved");
-                mNotification->show();
+                this->mNotification->setNotificationText("Saved");
+                this->mNotification->show();
 
-                mCodeEditors[index]->setNeedSave(false);
+                this->mCodeEditors[index]->setNeedSave(false);
 
-                updateOpenPagesList();
+                this->updateOpenPagesList();
             }
         } else {
-            fileSaveAs();
+            this->fileSaveAs();
         }
     }
 }
 
 void MainWindow::fileSaveAs() {
-    int index = mTabWidget->currentIndex();
-    if (index >= 0 && index < mCodeEditors.size()) {
-        QString filename = QFileDialog::getSaveFileName(this, "Save As", mFilenames[index], "Text files (*.*)");
+    int index = this->mTabWidget->currentIndex();
+    if (index >= 0 && index < this->mCodeEditors.size()) {
+        QString filename = QFileDialog::getSaveFileName(this, "Save As", this->mFilenames[index], "Text files (*.*)");
         if (filename == "") {
             return;
         }
@@ -504,31 +510,31 @@ void MainWindow::fileSaveAs() {
             QString buf = mCodeEditors[index]->toPlainText();
             stream << buf;
             file.close();
-            mNotification->setNotificationText("Saved");
-            mNotification->show();
+            this->mNotification->setNotificationText("Saved");
+            this->mNotification->show();
 
-            mCodeEditors[index]->setNeedSave(false);
+            this->mCodeEditors[index]->setNeedSave(false);
 
-            updateOpenPagesList();
+            this->updateOpenPagesList();
         }
     }
 }
 
 void MainWindow::fileClose() {
-    int index = mTabWidget->currentIndex();
-    if (index >= 0 && index < mCodeEditors.size()) {
-        int ret = QMessageBox::question(this, "Close file", "Do you want to save the file?\n" + mFilenames[index], QMessageBox::Save | QMessageBox::Cancel | QMessageBox::No, QMessageBox::Save);
+    int index = this->mTabWidget->currentIndex();
+    if (index >= 0 && index < this->mCodeEditors.size()) {
+        int ret = QMessageBox::question(this, "Close file", "Do you want to save the file?\n" + this->mFilenames[index], QMessageBox::Save | QMessageBox::Cancel | QMessageBox::No, QMessageBox::Save);
         if (ret == QMessageBox::Save) {
-            fileSave();
+            this->fileSave();
         } else if (ret == QMessageBox::Cancel) {
             return;
         } else {
-            mCodeEditors[index]->clear();
-            mStatusBarLabel->setText("");
-            mCodeEditors[index]->setFileExtension("");
-            mCodeEditors[index]->updateSyntaxHighlighter();
+            this->mCodeEditors[index]->clear();
+            this->mStatusBarFilePathLabel->setText("");
+            this->mCodeEditors[index]->setFileExtension("");
+            this->mCodeEditors[index]->updateSyntaxHighlighter();
 
-            updateOpenPagesList();
+            this->updateOpenPagesList();
         }
     }
 }
@@ -541,6 +547,7 @@ void MainWindow::openDir(){
         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
     );
 
+    QString messageError = "";
     if (!directory.isEmpty()) {
         QFileSystemModel *model = qobject_cast<QFileSystemModel*>(this->mDirTree->model());
         if (model) {
@@ -550,22 +557,32 @@ void MainWindow::openDir(){
 
                 model->sort(0, Qt::AscendingOrder);
             } else {
-                qDebug() << "Invalid directory index.";
+                messageError = "Invalid directory index.";
             }
         } else {
-            qDebug() << "Model is not valid.";
+            messageError = "Model is not valid.";
         }
     } else {
-        qDebug() << "No directory selected.";
+        messageError = "No directory selected.";
     }
+
+    if (messageError.size() > 0){
+        QMessageBox mBox;
+        mBox.setWindowIcon(QIcon(":/resources/icons/icon.png"));
+        mBox.setIcon(QMessageBox::Warning);
+        mBox.setText(messageError);
+        mBox.setButtonText(QMessageBox::Ok, "Ok");
+        mBox.exec();
+    }
+
 }
 
 void MainWindow::closeEvent(QCloseEvent* /*event*/) {
-    for (int i = 0; i < mCodeEditors.size(); ++i) {
-        if (mCodeEditors[i]->needSave()) {
-            int ret = QMessageBox::question(this, "Close file", "Do you want to save the file?\n" + mFilenames[i], QMessageBox::Save | QMessageBox::No, QMessageBox::Save);
+    for (int i = 0; i < this->mCodeEditors.size(); ++i) {
+        if (this->mCodeEditors[i]->needSave()) {
+            int ret = QMessageBox::question(this, "Close file", "Do you want to save the file?\n" + this->mFilenames[i], QMessageBox::Save | QMessageBox::No, QMessageBox::Save);
             if (ret == QMessageBox::Save) {
-                fileSave();
+                this->fileSave();
             }
         }
     }
