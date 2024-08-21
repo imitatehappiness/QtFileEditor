@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowIcon(QIcon(":/resources/icons/icon.png"));
 
     initLeftPanel();
-    initTabWidget();
+    initMainPanel();
 
     this->statusBar()->setSizeGripEnabled(false);
     this->initMenuBar();
@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     addNewTab();
     ui->frameTree->setMinimumWidth(200);
-    ui->splitter->setSizes(QList<int>() << 200 << 700);
+    ui->splitter_2->setSizes(QList<int>() << 200 << 700);
 }
 
 MainWindow::~MainWindow() {
@@ -131,6 +131,8 @@ void MainWindow::closeTab(int index) {
     if (index==0 && mCodeEditors.size() == 0){
         addNewTab();
     }
+
+    this->updateOpenPagesList();
 }
 
 void MainWindow::updateCurrentTab(int index) {
@@ -146,6 +148,10 @@ void MainWindow::onTabMoved(int from, int to){
     qSwap(this->mFilenames[to], this->mFilenames[from]);
     qSwap(this->mCodeEditors[to], this->mCodeEditors[from]);
     updateOpenPagesList();
+}
+
+void MainWindow::clearTerminal(){
+    mTermWidget->clear();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -218,11 +224,9 @@ void MainWindow::setSearchWidgetGeometry() {
 }
 
 void MainWindow::initLeftPanel() {
-    // Создаем модель файловой системы и устанавливаем корневой путь
     QFileSystemModel *model = new QFileSystemModel(this);
     model->setRootPath("");
 
-    // Создаем и настраиваем QTreeView
     this->mDirTree = new CustomDirTreeView(this);
     this->mDirTree->setStyleSheet("border: 0px;");
     this->mDirTree->setModel(model);
@@ -233,32 +237,29 @@ void MainWindow::initLeftPanel() {
     this->mDirTree->setColumnWidth(0, 100);
     QScroller::grabGesture(this->mDirTree, QScroller::TouchGesture);
 
-    // Создаем и настраиваем QListWidget
     this->mOpenPagesList = new QListWidget();
     for (const QString &filename : mFilenames) {
         this->mOpenPagesList->addItem(filename);
     }
 
-    // Создаем QSplitter и добавляем в него QTreeView и QListWidget
     QSplitter *splitter = new QSplitter(Qt::Vertical, ui->frameTree);
+    splitter->setChildrenCollapsible(false);
     splitter->addWidget(this->mDirTree);
     splitter->addWidget(mOpenPagesList);
 
-    // Устанавливаем минимальные размеры для виджетов (опционально)
-    this->mDirTree->setMinimumHeight(100); // Устанавливаем минимальную высоту для QTreeView
-    this->mOpenPagesList->setMinimumHeight(100); // Устанавливаем минимальную высоту для QListWidget
+    this->mDirTree->setMinimumHeight(100);
+    this->mOpenPagesList->setMinimumHeight(100);
 
-    // Создаем вертикальный макет и добавляем в него QSplitter
     QVBoxLayout *layout = new QVBoxLayout(ui->frameTree);
+    layout->setContentsMargins(9, 9, 0, 9);
     layout->addWidget(splitter);
+
     ui->frameTree->setLayout(layout);
 
-    // Скрываем все колонки модели файловой системы, кроме первой
     for (int i = 1; i < model->columnCount(); ++i) {
         this->mDirTree->setColumnHidden(i, true);
     }
 
-    // Устанавливаем корневой индекс для модели
     const QString rootPath = "/";
     if (!rootPath.isEmpty()) {
         const QModelIndex rootIndex = model->index(QDir::cleanPath(rootPath));
@@ -266,18 +267,15 @@ void MainWindow::initLeftPanel() {
             this->mDirTree->setRootIndex(rootIndex);
     }
 
-    // Настраиваем заголовок QTreeView
     this->mDirTree->header()->setFixedHeight(0);
 
-    // Сортировка модели файловой системы
     model->sort(0, Qt::AscendingOrder);
 
-    // Подключаем сигнал к слоту
     connect(this->mDirTree, SIGNAL(fileOpen(QString&, bool)), this, SLOT(fileOpen(QString&, bool)));
     connect(this->mOpenPagesList, &QListWidget::itemDoubleClicked, this, &MainWindow::onOpenPageItemDoubleClicked);
 }
 
-void MainWindow::initTabWidget(){
+void MainWindow::initMainPanel(){
     mTabWidget = new QTabWidget();
     mTabWidget->setContentsMargins(0, 0, 0, 0);
 
@@ -289,7 +287,20 @@ void MainWindow::initTabWidget(){
 
     QVBoxLayout *layout = new QVBoxLayout(ui->frameEditor);
     layout->addWidget(mTabWidget);
+    layout->setContentsMargins(0, 9, 9, 0);
+
     ui->frameTree->setLayout(layout);
+
+    ui->splitter->setSizes(QList<int>() << 300 << 100);
+
+    mTermWidget = new TermWidget(this);
+    mTermWidget->setContentsMargins(0, 0, 0, 0);
+    mTermWidget->setStyleSheet("font: 12px;");
+
+    QVBoxLayout *layoutTerm = new QVBoxLayout(ui->frameEditor);
+    layoutTerm->setContentsMargins(0, 0, 0, 0);
+    layoutTerm->addWidget(mTermWidget);
+    ui->frameTerminal->setLayout(layoutTerm);
 }
 
 void MainWindow::updateOpenPagesList(){
@@ -435,6 +446,14 @@ void MainWindow::initMenuBar(){
     connect(saveAsFile, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(closeFile, SIGNAL(triggered()), this, SLOT(fileClose()));
     connect(openDir, SIGNAL(triggered()), this, SLOT(openDir()));
+
+
+    QMenu *menuTerminal = menuBar()->addMenu("&Terminal");
+    auto *clearTerminal = new QAction("&Clear", this);
+    menuTerminal->addAction(clearTerminal);
+    connect(clearTerminal, SIGNAL(triggered()), this, SLOT(clearTerminal()));
+
+
 }
 
 void MainWindow::fileSave() {

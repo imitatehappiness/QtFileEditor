@@ -20,6 +20,8 @@ SOURCES += \
     notification.cpp \
     pythonsyntaxhighlighter.cpp \
     searchwidget.cpp \
+    terminalsyntaxhighlighter.cpp \
+    termwidget.cpp \
     windowframe.cpp \
     xmlsyntaxhighlighter.cpp \
     xsltsyntaxhighlighter.cpp
@@ -36,6 +38,8 @@ HEADERS += \
     notification.h \
     pythonsyntaxhighlighter.h \
     searchwidget.h \
+    terminalsyntaxhighlighter.h \
+    termwidget.h \
     types.h \
     windowframe.h \
     xmlsyntaxhighlighter.h \

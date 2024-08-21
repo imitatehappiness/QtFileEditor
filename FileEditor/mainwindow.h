@@ -9,6 +9,8 @@
 
 #include "customtreeview.h"
 
+#include "termwidget.h"
+
 QT_BEGIN_NAMESPACE
 class Notification;
 class CodeEditor;
@@ -40,6 +42,7 @@ private slots:
     void addNewTab();
     void updateCurrentTab(int index);
     void onTabMoved(int from, int to);
+    void clearTerminal();
 public slots:
     void fileOpen(QString& path, bool newTab = false);
     void onOpenPageItemDoubleClicked(QListWidgetItem* item);
@@ -53,7 +56,7 @@ private:
     void initMenuBar();
     void setSearchWidgetGeometry();
     void initLeftPanel();
-    void initTabWidget();
+    void initMainPanel();
     void updateOpenPagesList();
 private:
     Ui::MainWindow *ui;
@@ -67,4 +70,5 @@ private:
     SearchWidget* mSearch;
     CustomDirTreeView* mDirTree;
     QListWidget *mOpenPagesList;
+    TermWidget* mTermWidget;
 };
