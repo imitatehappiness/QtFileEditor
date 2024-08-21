@@ -33,13 +33,9 @@ public:
 public slots:
     int  setTextCursorAtInput();
     int  setTextCursorAtEnd();
-    
     void paste();
-    
     void execute();
-    
     void processInput();
-    
 protected slots:
     void processOutput();
     void finished(int exitCode, QProcess::ExitStatus exitStatus);

@@ -110,13 +110,19 @@ void MainWindow::addNewTab() {
 
 void MainWindow::closeTab(int index) {
     if (index >= 0 && index < mTabWidget->count()) {
+
         QWidget *widget = mTabWidget->widget(index);
         if (widget) {
+            if (mCodeEditors[index]->needSave()){
+                fileClose();
+            }
+
             mTabWidget->removeTab(index);
             delete widget;
         }
 
         if (index < mCodeEditors.size()) {
+
             mCodeEditors.remove(index);
             mFilenames.remove(index);
             mTabWidget->setFocus();
@@ -251,7 +257,7 @@ void MainWindow::initLeftPanel() {
     this->mOpenPagesList->setMinimumHeight(100);
 
     QVBoxLayout *layout = new QVBoxLayout(ui->frameTree);
-    layout->setContentsMargins(9, 9, 0, 9);
+    layout->setContentsMargins(9, 9, 9, 9);
     layout->addWidget(splitter);
 
     ui->frameTree->setLayout(layout);
@@ -277,7 +283,7 @@ void MainWindow::initLeftPanel() {
 
 void MainWindow::initMainPanel(){
     mTabWidget = new QTabWidget();
-    mTabWidget->setContentsMargins(0, 0, 0, 0);
+    mTabWidget->setContentsMargins(9, 0, 0, 0);
 
     mTabWidget->setTabsClosable(true);
     mTabWidget->setMovable(true);
@@ -287,14 +293,14 @@ void MainWindow::initMainPanel(){
 
     QVBoxLayout *layout = new QVBoxLayout(ui->frameEditor);
     layout->addWidget(mTabWidget);
-    layout->setContentsMargins(0, 9, 9, 0);
+    layout->setContentsMargins(9, 9, 9, 0);
 
     ui->frameTree->setLayout(layout);
 
     ui->splitter->setSizes(QList<int>() << 300 << 100);
 
     mTermWidget = new TermWidget(this);
-    mTermWidget->setContentsMargins(0, 0, 0, 0);
+    mTermWidget->setContentsMargins(9, 0, 0, 0);
     mTermWidget->setStyleSheet("font: 12px;");
 
     QVBoxLayout *layoutTerm = new QVBoxLayout(ui->frameEditor);
@@ -322,6 +328,7 @@ void MainWindow::fileCreate() {
             mStatusBarLabel->setText(filename);
             mCodeEditors[index]->setFileExtension(filename);
             mCodeEditors[index]->updateSyntaxHighlighter();
+            mCodeEditors[index]->setNeedSave(true);
 
             QString tabName = QFileInfo(filename).fileName();
             mTabWidget->setTabText(index, tabName);

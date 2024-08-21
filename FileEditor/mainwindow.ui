@@ -66,6 +66,9 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
       <widget class="QFrame" name="frameTree">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -100,7 +103,7 @@
         <enum>Qt::Vertical</enum>
        </property>
        <property name="childrenCollapsible">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <widget class="QFrame" name="frameEditor">
         <property name="sizePolicy">

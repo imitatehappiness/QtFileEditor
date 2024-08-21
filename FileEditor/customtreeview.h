@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qapplication.h"
 #include <QFileSystemModel>
 #include <QFileIconProvider>
 #include <QScreen>
@@ -14,6 +15,7 @@
 #include <QDir>
 #include <QContextMenuEvent>
 #include <QMessageBox>
+#include <QClipboard>
 
 class CustomDirTreeView : public QTreeView
 {
@@ -42,6 +44,7 @@ protected:
 
         QAction *renameAction = contextMenu.addAction("Rename");
         QAction *copyAction = contextMenu.addAction("Copy");
+        QAction *copyPathAction = contextMenu.addAction("Copy path");
         QAction *pasteAction = contextMenu.addAction("Paste");
         QAction *deleteAction = contextMenu.addAction("Delete");
 
@@ -49,6 +52,7 @@ protected:
         connect(deleteAction, &QAction::triggered, this, [this, index]() { deleteItem(index); });
         connect(renameAction, &QAction::triggered, this, [this, index]() { renameItem(index); });
         connect(copyAction, &QAction::triggered, this, [this, index]() { copyItem(index); });
+        connect(copyPathAction, &QAction::triggered, this, [this, index]() { copyPathItem(index); });
         connect(pasteAction, &QAction::triggered, this, [this, index]() { pasteItem(index); });
 
         // Enable or disable the Paste action based on whether mСopyPath is set
@@ -187,6 +191,21 @@ private:
         }
     }
 
+    void copyPathItem(const QModelIndex &index) {
+        if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
+            QString itemPath = fsModel->filePath(index);
+
+            #ifdef Q_OS_WIN32
+                itemPath.replace('/', '\\');
+            #endif
+
+            mCopyPath = itemPath;
+
+            QClipboard *clipboard = QApplication::clipboard();
+
+            clipboard->setText(mCopyPath);
+        }
+    }
     void pasteItem(const QModelIndex &index){
         if (QFileSystemModel *fsModel = qobject_cast<QFileSystemModel*>(model())) {
             if (!mCopyPath.isEmpty()) {
