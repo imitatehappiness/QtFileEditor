@@ -41,6 +41,7 @@ private slots:
     void onTabMoved(int from, int to);
     void clearTerminal();
     void updateCharactersCount(int count);
+    void showShortcuts();
 public slots:
     void fileOpen(QString& path, bool newTab = false);
     void onOpenPageItemDoubleClicked(QListWidgetItem* item);

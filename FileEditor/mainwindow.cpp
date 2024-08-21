@@ -129,6 +129,23 @@ void MainWindow::updateCharactersCount(int count){
     this->mStatusBarCharactersCountLabel->setText("Characters: " + QString::number(count));
 }
 
+void MainWindow::showShortcuts(){
+
+    QString message = QString(
+        "Ctrl + S = Save\n"
+        "Ctrl + Shist + S = Save as\n"
+        "Ctrl + F = Open/Close search and replace panel\n"
+        "Ctrl + Q = Open/Close left panel\n"
+        "Ctrl + R = Open new tab editor\n"
+        "Ctrl + E = Close current tab editor\n"
+    );
+    QMessageBox mBox;
+    mBox.setWindowIcon(QIcon(":/resources/icons/icon.png"));
+    mBox.setText(message);
+    mBox.setButtonText(QMessageBox::Ok, "Ok");
+    mBox.exec();
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event) {
     QMainWindow::resizeEvent(event);
     this->setSearchWidgetGeometry();
@@ -467,6 +484,11 @@ void MainWindow::initMenuBar(){
     auto *clearTerminal = new QAction("&Clear", this);
     menuTerminal->addAction(clearTerminal);
     connect(clearTerminal, SIGNAL(triggered()), this, SLOT(clearTerminal()));
+
+    QMenu *menuInfo = menuBar()->addMenu("&Info");
+    auto *showShortcuts = new QAction("&Shortcuts", this);
+    menuInfo->addAction(showShortcuts);
+    connect(showShortcuts, SIGNAL(triggered()), this, SLOT(showShortcuts()));
 }
 
 void MainWindow::fileSave() {
