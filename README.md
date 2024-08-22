@@ -14,3 +14,5 @@ File Editor is a simple custom text editor application built using Qt (Win).
 <div/>
   
 ![858879167210a22e0d4e2f98435f0fd9](https://github.com/user-attachments/assets/db6e7d74-e5b5-43c2-a29d-4986d592bce9)
+
+![67167498186bbacf62b42118566e9363](https://github.com/user-attachments/assets/ee8ebbc9-6afc-4c8b-b385-3e9b3b884e37)
