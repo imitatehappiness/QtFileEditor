@@ -213,11 +213,9 @@ void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */){
 }
 
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy){
-    if (dy != 0) {
-        this->mLineNumberArea->scroll(0, dy);
-    } else {
-        this->mLineNumberArea->update(0, rect.y(), this->mLineNumberArea->width(), rect.height());
-    }
+
+    dy != 0 ? this->mLineNumberArea->scroll(0, dy)
+            : this->mLineNumberArea->update(0, rect.y(), this->mLineNumberArea->width(), rect.height());
 
     if (rect.contains(viewport()->rect())){
         this->updateLineNumberAreaWidth(0);
@@ -316,8 +314,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event){
             QString number = QString::number(blockNumber + 1);
             painter.setPen(lineNumberColor);
             painter.setFont(lineNumberFont);
-            painter.drawText(0, top, mLineNumberArea->width(), fontMetrics().height(),
-                             Qt::AlignHCenter, number);
+            painter.drawText(0, top, mLineNumberArea->width(), fontMetrics().height(), Qt::AlignHCenter, number);
         }
 
         block = block.next();

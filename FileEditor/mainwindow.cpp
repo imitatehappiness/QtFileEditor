@@ -276,6 +276,7 @@ void MainWindow::initMainPanel(){
     QVBoxLayout *layout = new QVBoxLayout(ui->frameEditor);
     layout->addWidget(mTabWidget);
     layout->setContentsMargins(9, 9, 9, 0);
+    layout->setSpacing(0);
 
     ui->frameTree->setLayout(layout);
 
@@ -291,33 +292,9 @@ void MainWindow::initMainPanel(){
     layoutTerm->addWidget(this->mTermWidget);
     ui->frameTerminal->setLayout(layoutTerm);
 
-    // addTabButton
-    QPushButton *addTabButton = new QPushButton(this);
-    addTabButton->setIcon(QIcon(":resources/icons/plus.png"));
-
-    addTabButton->setStyleSheet(
-        "QPushButton {"
-        "    background-color: #eee;"
-        "    border: 1px solid #eee;"
-        "    border-radius: 4px;"
-        "    padding-right: 0px;"
-        "    margin-left: 1px;"
-        "    height: 22px;"
-        "    width: 22px;"
-        "}"
-
-        "QPushButton:hover {"
-        "   background: gray;"
-        "   border: 1px solid gray;"
-        "   border-radius: 4px;"
-        "}"
-    );
-
-    this->mTabWidget->setCornerWidget(addTabButton, Qt::TopRightCorner);
-    connect(addTabButton, &QPushButton::clicked, this, &MainWindow::addNewTab);
     connect(mTabWidget->tabBar(), &QTabBar::tabMoved, this, &MainWindow::onTabMoved);
 
-    ui->splitterLeftAndMain->setSizes(QList<int>() << 200 << 700);
+    ui->splitterLeftAndMain->setSizes(QList<int>() << 400 << 700);
 }
 
 void MainWindow::initStatusBar(){
@@ -464,21 +441,25 @@ void MainWindow::initMenuBar(){
     auto *saveFile = new QAction("&Save", this);
     auto *saveAsFile = new QAction("&Save as", this);
     auto *closeFile = new QAction("&Close", this);
+    auto *openNewPage = new QAction("&Open new page", this);
 
     menuFile->addAction(openDir);
     menuFile->addAction(openFile);
+    menuFile->addAction(openNewPage);
+    menuFile->addSeparator();
     menuFile->addAction(createFile);
     menuFile->addAction(saveFile);
     menuFile->addAction(saveAsFile);
+    menuFile->addSeparator();
     menuFile->addAction(closeFile);
 
     connect(createFile, SIGNAL(triggered()), this, SLOT(fileCreate()));
     connect(openFile, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    connect(openNewPage, SIGNAL(triggered()), this, SLOT(addNewTab()));
     connect(saveFile, SIGNAL(triggered()), this, SLOT(fileSave()));
     connect(saveAsFile, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(closeFile, SIGNAL(triggered()), this, SLOT(fileClose()));
     connect(openDir, SIGNAL(triggered()), this, SLOT(openDir()));
-
 
     QMenu *menuTerminal = menuBar()->addMenu("&Terminal");
     auto *clearTerminal = new QAction("&Clear", this);
