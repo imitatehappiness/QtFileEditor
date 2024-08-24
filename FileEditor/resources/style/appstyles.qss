@@ -397,26 +397,26 @@ QTabBar QToolButton {
 }
 
 QTabBar QToolButton::right-arrow:hover, QToolButton::left-arrow:hover {
-    background: gray;
-    border: 1px solid gray;
+    background: rgb(50, 50, 50);
+    border: 1px solid rgb(50, 50, 50);
     border-radius: 4px;
 }
 
 QTabBar QToolButton::right-arrow:disabled, QToolButton::left-arrow:disabled {
-    background: rgb(60, 60, 60);
-    border: 1px solid rgb(60, 60, 60);
+    background: rgb(70, 70, 70);
+    border: 1px solid rgb(70, 70, 70);
     border-radius: 4px;
 }
 
 QTabBar QToolButton::right-arrow {
-    image: url(:/resources/icons/arrow-right_light.png);
+    image: url(:/resources/icons/right_pages_arrow_light.png);
     background-color: rgb(24,24,24);
     border: 1px solid rgb(24,24,24);
     border-radius: 4px;
 }
 
 QTabBar QToolButton::left-arrow {
-    image: url(:/resources/icons/arrow-left_light.png);
+    image: url(:/resources/icons/left_pages_arrow_light.png);
     background-color: rgb(24,24,24);
     border: 1px solid rgb(24,24,24);
     border-radius: 4px;

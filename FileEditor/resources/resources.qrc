@@ -32,5 +32,7 @@
         <file>icons/arrow-left_light.png</file>
         <file>icons/arrow-right_light.png</file>
         <file>icons/plus_light.png</file>
+        <file>icons/left_pages_arrow_light.png</file>
+        <file>icons/right_pages_arrow_light.png</file>
     </qresource>
 </RCC>
