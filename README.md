@@ -7,7 +7,7 @@
 
 File Editor is a simple custom text editor application built using Qt (Win).
 
-## Example
+## UI Demonstration
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/a506655f-8678-43e3-90ae-c6f4d7048fc2"/>
