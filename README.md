@@ -7,6 +7,8 @@
 
 File Editor is a simple custom text editor application built using Qt (Win).
 
+[My Custom Title Bar Template](https://github.com/imitatehappiness/QtCustomTitleBar)
+
 ## UI Demonstration
 
 <div align="center">
