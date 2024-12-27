@@ -384,6 +384,21 @@ void MainWindow::fileOpen() {
 }
 
 void MainWindow::fileOpen(QString &path, bool newTab) {
+
+    int openedIndex = -1;
+    for (int i = 0; i < mFilenames.size(); ++i) {
+        if (mFilenames[i] == path) {
+            openedIndex = i;
+            break;
+        }
+    }
+
+    if (openedIndex != -1) {
+        // Если файл уже открыт, переключаемся на соответствующую вкладку
+        mTabWidget->setCurrentIndex(openedIndex);
+        return;
+    }
+
     if (newTab){
        this->addNewTab();
     }
